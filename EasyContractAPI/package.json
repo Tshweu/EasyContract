@@ -2,16 +2,17 @@
   "name": "easy-contract-api",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/start.js",
   "scripts": {
     "test": "jest --verbose --watchAll --runInBand",
     "build": "tsc",
-    "start": "set node dist/index.js",
-    "dev": "nodemon index.ts"
+    "start": "set node dist/start.js",
+    "dev": "nodemon start.ts"
   },
   "author": "Tshweu Sephiri",
   "license": "ISC",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/luxon": "^3.4.2",
@@ -25,6 +26,7 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "luxon": "^3.5.0",

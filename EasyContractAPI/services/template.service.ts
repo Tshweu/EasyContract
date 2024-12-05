@@ -1,6 +1,6 @@
 import { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { Template } from '../models/Template';
-import { TemplateDTO } from '../models/TemplateDTO';
+import { TemplateDTO } from '../models/dto/TemplateDTO';
 
 export class TemplateService {
     private db: Pool;
@@ -28,6 +28,27 @@ export class TemplateService {
             throw Error('Failed to find template');
         }
     }
+
+    async doesTemplateTitleExist(title: string,id: number): Promise<boolean> {
+        const sql = `
+        SELECT 
+            id,
+            title
+        FROM template
+        WHERE title = ?
+        AND userId = ?;`;
+        try {
+            const [result] = await this.db.query<RowDataPacket[]>(sql, [title,id]);
+            console.log(result);
+            if(result.length > 0){
+                return true
+            }
+            return false;
+        } catch (error: any) {
+            throw Error(error.message);
+        }
+    }
+
 
     async findTemplateById(id: number): Promise<Template> {
         const sql = `

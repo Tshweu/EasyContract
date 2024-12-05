@@ -1,9 +1,15 @@
-import express, { Router } from 'express';
-// import UserController  from './controllers/UserContoller';
+import express, { Application} from 'express';
+import userRoutes from './routes/user.routes';
+import contractRecipientRoutes from './routes/contract-recipient.routes';
+import templateRoutes from './routes/template.routes';
+import contractRoutes from './routes/contract.routes';
 
-const routes = express.Router();
+export default class Routes{
 
-// routes.use('/user',UserController);
-
-
-export default routes;
+    constructor(app: Application) {
+        app.use("/api/v1/user", userRoutes);
+        app.use("/api/v1/contract", contractRoutes);
+        app.use("/api/v1/template", templateRoutes);
+        app.use("/api/v1/recipient", contractRecipientRoutes);
+    }
+}

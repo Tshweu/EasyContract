@@ -1,7 +1,7 @@
 import { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import pool from '../config/db';
 import User from '../models/User';
-import UserDTO from '../models/UserDTO';
+import UserDTO from '../models/dto/UserDTO';
 
 export class UserService {
     private db: Pool;
@@ -10,7 +10,7 @@ export class UserService {
         this.db = db;
     }
 
-    async findUserByEmail(email: string): Promise<User> {
+    async findUserByEmail(email: string): Promise<User | null> {
         const sql = `
         SELECT 
             id,
@@ -21,13 +21,18 @@ export class UserService {
         WHERE email = ?;`;
         try {
             const [user] = await this.db.query<RowDataPacket[]>(sql, [email]);
-            return this.toUser(user[0]);
-        } catch (error) {
+            console.log(user);
+            if(user.length > 0){
+                return this.toUser(user[0]);
+            }
+            return null;
+        } catch (error: any) {
+            throw Error(error.message);
             throw Error('Failed to find user');
         }
     }
 
-    async findUserById(id: number): Promise<User> {
+    async findUserById(id: number): Promise<User | null> {
         const sql = `
         SELECT 
             id,
@@ -38,9 +43,12 @@ export class UserService {
         WHERE id = ?;`;
         try {
             const [result] = await this.db.query<RowDataPacket[]>(sql, [id]);
-            return this.toUser(result[0]);
-        } catch (error) {
-            throw Error('Failed to find user');
+            if(result.length > 0){
+                return this.toUser(result[0]);
+            }
+            return null;
+        } catch (error: any) {
+            throw Error(error.message);
         }
     }
 
@@ -54,7 +62,11 @@ export class UserService {
             WHERE 
                 id = ?;
             `;
-            const [result] = await this.db.query<ResultSetHeader>(sql, [user.name, user.surname, id]);
+            const [result] = await this.db.query<ResultSetHeader>(sql, [
+                user.name,
+                user.surname,
+                id,
+            ]);
             return result.affectedRows;
         } catch (error: any) {
             throw new Error(error.message);
@@ -71,7 +83,7 @@ export class UserService {
                 password)
             VALUES (?,?,?,?)
             `;
-           const [result] = await this.db.query<ResultSetHeader>(sql, [
+            const [result] = await this.db.query<ResultSetHeader>(sql, [
                 user.name,
                 user.surname,
                 user.email,
@@ -79,6 +91,7 @@ export class UserService {
             ]);
             return result.affectedRows;
         } catch (error: any) {
+            console.log(error);
             throw new Error(error.message);
         }
     }

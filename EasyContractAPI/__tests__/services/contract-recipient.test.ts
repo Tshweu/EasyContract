@@ -1,4 +1,4 @@
-import { ContractRecipientService } from '../../services/ContractRecipientService';
+import { ContractRecipientService } from '../../services/contract-recipient.service';
 import pool from '../../config/db';
 import { ContractRecipient } from '../../models/ContractRecipient';
 import { createTables, destroyTables } from '../../config/init';

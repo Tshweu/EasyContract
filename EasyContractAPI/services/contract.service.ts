@@ -9,6 +9,30 @@ export class ContractService {
         this.db = db;
     }
 
+    async findAll(id: number): Promise<Contract[]> {
+        const sql = `
+        SELECT 
+            id,
+            title,
+            date,
+            completed,
+            status,
+            name,
+            surname,
+            email,
+            idNumber
+        FROM contract
+        LEFT JOIN contract_recipient 
+        ON contract_recipient.contractId = contract.contractId
+        WHERE userId = ?;`;
+        try {
+            const [contract] = await this.db.query<RowDataPacket[]>(sql, [id]);
+            return this.toContractList(contract);
+        } catch (error) {
+            throw Error('Failed to find contract');
+        }
+    }
+
     async findContractById(id: number): Promise<Contract> {
         const sql = `
         SELECT 
@@ -153,5 +177,21 @@ export class ContractService {
             otp: result.otp,
             userId: result.userId,
         };
+    }
+
+    private toContractList(result: RowDataPacket[]): Contract[] {
+        let contractList: Contract[] = [];
+        for(let i = 0;i< result.length;i++){
+            contractList.push({
+                id: result[0].id,
+                title: result[0].title,
+                terms: result[0].terms,
+                date: result[0].date,
+                completed: Boolean(result[0].completed),
+                status: result[0].status,
+                userId: result[0].userId,
+            });
+        }
+        return contractList;
     }
 }

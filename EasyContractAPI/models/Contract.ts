@@ -8,6 +8,6 @@ export interface Contract {
     date: string;
     status: string;
     completed: boolean;
-    otp: number | null;
+    otp?: number | null;
     userId: number;
 }

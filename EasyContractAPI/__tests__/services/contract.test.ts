@@ -1,4 +1,4 @@
-import { ContractService } from '../../services/ContractService';
+import { ContractService } from '../../services/contract.service';
 import pool from '../../config/db';
 import { Contract } from '../../models/Contract';
 import { createTables, destroyTables } from '../../config/init';

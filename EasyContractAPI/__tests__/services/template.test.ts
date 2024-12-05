@@ -1,4 +1,4 @@
-import { TemplateService } from '../../services/TemplateService';
+import { TemplateService } from '../../services/template.service';
 import { Template } from '../../models/Template';
 import pool from '../../config/db';
 import { createTables, destroyTables } from '../../config/init';

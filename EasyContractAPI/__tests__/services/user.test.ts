@@ -1,4 +1,4 @@
-import { UserService } from '../../services/UserService';
+import { UserService } from '../../services/user.service';
 import pool from '../../config/db';
 import User from '../../models/User';
 import { createTables, destroyTables } from '../../config/init';
@@ -36,14 +36,14 @@ describe('user service tests', () => {
     test('should get user by id', async () => {
         let userService: UserService = new UserService(pool);
 
-        const foundUser: User = await userService.findUserById(2);
+        const foundUser: User | null = await userService.findUserById(2);
         expect(foundUser).toEqual(user);
     });
 
     test('should get user by email', async () => {
         let userService: UserService = new UserService(pool);
 
-        const foundUser: User = await userService.findUserByEmail(
+        const foundUser: User | null = await userService.findUserByEmail(
             'test@gmail.com',
         );
         expect(foundUser).toEqual(user);
