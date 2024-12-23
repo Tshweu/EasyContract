@@ -1,12 +1,32 @@
 import { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { Template } from '../models/Template';
 import { TemplateDTO } from '../models/dto/TemplateDTO';
+import { TemplateTitle } from '../models/TemplateTitle';
 
 export class TemplateService {
     private db: Pool;
 
     constructor(db: Pool) {
         this.db = db;
+    }
+
+    async findTitles(id: number): Promise<TemplateTitle[] | null> {
+        const sql = `
+        SELECT 
+            id,
+            title,
+            userId
+        FROM template
+        WHERE userId = ?;`;
+        try {
+            const [result] = await this.db.query<RowDataPacket[]>(sql, [id]);
+            if(result.length > 0){
+                return this.toTemplateTitlesList(result);
+            }
+            return null;
+        } catch (error) {
+            throw Error('Failed to find template');
+        }
     }
 
     async findAll(id: number): Promise<Template[]> {
@@ -39,7 +59,6 @@ export class TemplateService {
         AND userId = ?;`;
         try {
             const [result] = await this.db.query<RowDataPacket[]>(sql, [title,id]);
-            console.log(result);
             if(result.length > 0){
                 return true
             }
@@ -49,8 +68,7 @@ export class TemplateService {
         }
     }
 
-
-    async findTemplateById(id: number): Promise<Template> {
+    async findTemplateById(id: number): Promise<Template | null> {
         const sql = `
         SELECT 
             id,
@@ -63,7 +81,11 @@ export class TemplateService {
         WHERE id = ?;`;
         try {
             const [result] = await this.db.query<RowDataPacket[]>(sql, [id]);
-            return this.toTemplate(result[0]);
+            if(result.length > 0) {
+                return this.toTemplate(result[0]);
+            };
+            return null;
+           
         } catch (error) {
             throw Error('Failed to find template');
         }
@@ -140,7 +162,18 @@ export class TemplateService {
     private toTemplateList(result: RowDataPacket[]): Template[]{
         let templates: Template[] = [];
         for(let i = 0;i< result.length;i++){
-            templates.push(this.toTemplate(result[0]));
+            templates.push(this.toTemplate(result[i]));
+        }
+        return templates;
+    }
+
+    private toTemplateTitlesList(result: RowDataPacket[]): TemplateTitle[]{
+        let templates: TemplateTitle[] = [];
+        for(let i = 0;i< result.length;i++){
+            templates.push({
+                id: result[0].id,
+                title: result[0].title
+            });
         }
         return templates;
     }

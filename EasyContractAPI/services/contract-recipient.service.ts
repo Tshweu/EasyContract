@@ -27,6 +27,25 @@ export class ContractRecipientService {
         }
     }
 
+    async findContractRecipientByContractId(id: number): Promise<ContractRecipient> {
+        const sql = `
+        SELECT 
+            id,
+            name,
+            surname,
+            email,
+            idNumber,
+            contractId
+        FROM contract_recipient
+        WHERE contractId = ?;`;
+        try {
+            const [result] = await this.db.query<RowDataPacket[]>(sql, [id]);
+            return this.toContractRecipient(result[0]);
+        } catch (error) {
+            throw Error('Failed to find contract');
+        }
+    }
+
     async updateContractRecipientById(
         id: number,
         contractRecipient: ContractRecipient,

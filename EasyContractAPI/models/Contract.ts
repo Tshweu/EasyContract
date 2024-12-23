@@ -2,7 +2,7 @@ import { ContractRecipient } from './ContractRecipient';
 import { ContractAudit } from './ContractAudit';
 
 export interface Contract {
-    id: number;
+    id?: number;
     title: string;
     terms: string;
     date: string;
@@ -10,4 +10,5 @@ export interface Contract {
     completed: boolean;
     otp?: number | null;
     userId: number;
+    recipient: ContractRecipient
 }

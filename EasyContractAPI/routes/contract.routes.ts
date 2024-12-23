@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import ContractController from '../controllers/contract.controller';
-import db from '../config/db';
+import verifyToken from '../helpers/token';
 
 class ContractRoutes {
     router = Router();
-    controller = new ContractController(db);
+    controller = new ContractController();
 
     constructor() {
         this.intializeRoutes();
@@ -12,13 +12,14 @@ class ContractRoutes {
 
     intializeRoutes() {
         // Create a new Contract
-        this.router.post('/', this.controller.create);
+        this.router.post('/',verifyToken, this.controller.create);
         // Retrieve All contracts
-        this.router.get('/', this.controller.get);
+        this.router.get('/',verifyToken, this.controller.get);
+        this.router.get('/stats',verifyToken, this.controller.getStats);
         // Retrieve a single Contract with id
-        this.router.get('/:id', this.controller.getById);
+        this.router.get('/:id',verifyToken, this.controller.getById);
         // Update a Contract with id
-        this.router.put('/:id', this.controller.update);
+        this.router.put('/:id',verifyToken, this.controller.update);
         // Validate contract otp
         // this.router.post('/validate/:id', this.controller.validate);
         // Recipient contract submission

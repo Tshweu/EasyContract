@@ -1,8 +1,6 @@
-export interface ContractRecipient {
-    id?: number;
+export interface ContractRecipientDTO {
     name: string;
     surname: string;
     email: string;
     idNumber: string;
-    contractId?: number;
 }

@@ -1,6 +1,7 @@
 import { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { Contract } from '../models/Contract';
 import { ContractRecipient } from '../models/ContractRecipient';
+import { ContractStats } from '../models/ContractStats';
 
 export class ContractService {
     private db: Pool;
@@ -9,10 +10,36 @@ export class ContractService {
         this.db = db;
     }
 
+    async findStats(id: number): Promise<ContractStats | null>{
+        const sql = `
+        SELECT 
+            *
+        FROM contract_stats
+        WHERE userId = ?;`;
+        try {
+            const [result] = await this.db.query<RowDataPacket[]>(sql, [id]);
+            if(result.length > 0){
+                const stats : ContractStats = {
+                    total: result[0].total,
+                    new: result[0].new,
+                    signed: result[0].signed,
+                    canceled: result[0].canceled,
+                    rejected: result[0].rejected,
+                    viewed: result[0].viewed,
+                    expired: result[0].expired
+                } 
+                return stats;
+            }
+            return null;
+        } catch (error) {
+            throw Error('Failed to find template');
+        }
+    }
+
     async findAll(id: number): Promise<Contract[]> {
         const sql = `
         SELECT 
-            id,
+            contract.id,
             title,
             date,
             completed,
@@ -23,12 +50,13 @@ export class ContractService {
             idNumber
         FROM contract
         LEFT JOIN contract_recipient 
-        ON contract_recipient.contractId = contract.contractId
+        ON contract_recipient.contractId = contract.id
         WHERE userId = ?;`;
         try {
             const [contract] = await this.db.query<RowDataPacket[]>(sql, [id]);
             return this.toContractList(contract);
         } catch (error) {
+            console.log(error);
             throw Error('Failed to find contract');
         }
     }
@@ -84,6 +112,9 @@ export class ContractService {
         await con.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
         await con.beginTransaction();
         try {
+
+            //Get template terms
+
             let sql = `
                 INSERT INTO contract(
                     title,
@@ -176,6 +207,12 @@ export class ContractService {
             status: result.status,
             otp: result.otp,
             userId: result.userId,
+            recipient: {
+                name: result.name,
+                surname: result.surname,
+                idNumber: result.idNumber,
+                email: result.email,
+            }
         };
     }
 
@@ -183,13 +220,19 @@ export class ContractService {
         let contractList: Contract[] = [];
         for(let i = 0;i< result.length;i++){
             contractList.push({
-                id: result[0].id,
-                title: result[0].title,
-                terms: result[0].terms,
-                date: result[0].date,
-                completed: Boolean(result[0].completed),
-                status: result[0].status,
-                userId: result[0].userId,
+                id: result[i].id,
+                title: result[i].title,
+                terms: result[i].terms,
+                date: result[i].date,
+                completed: Boolean(result[i].completed),
+                status: result[i].status,
+                userId: result[i].userId,
+                recipient: {
+                    name: result[i].name,
+                    surname: result[i].surname,
+                    idNumber: result[i].idNumber,
+                    email: result[i].email,
+                }
             });
         }
         return contractList;

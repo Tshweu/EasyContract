@@ -1,29 +1,36 @@
 // web token dependency
-import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv';
-dotenv.config();
-//use env variable
-const key = process.env.KEY;
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { Request, Response } from 'express';
 
-function verifyToken(req,res,next){
+
+
+function verifyToken(req: Request, res: Response, next: any) {
+    //use env variable
+    const key = process.env.KEY;
     //check if authorization exists
-    
-    if(!req.headers.authorization){
-        return res.status(401).send('Unauthorized request');
-    }else{
+    if(!key){
+        res.status(401).send('Unauthorized request, Internal Server Error');
+        return;
+    }
+    if (!req.headers.authorization) {
+        res.status(401).send('Unauthorized request');
+        return;
+    } else {
         //split where there is a space and take token
         //@ index 1
-        let token = req.headers.authorization.split(' ')[1]; 
+        let token = req.headers.authorization.split(' ')[1];
         //check if token is null
-        if(token === null){
-            return res.status(401).send('Unauthorized request');
-        } else{
-            let payload = jwt.verify(token, key);
+        if (token === null) {
+            res.status(401).send('Unauthorized request');
+            return;
+        } else {
+            let payload: any = jwt.verify(token,key);
             //checks if valid token
-            if(!payload){
-                return res.status(401).send('Unauthorized request');
+            if (!payload) {
+                res.status(401).send('Unauthorized request');
+                return;
             }
-            req.body.user_id = payload.subject;
+            req.body.userId = payload.id;
             next();
         }
     }

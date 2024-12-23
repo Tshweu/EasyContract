@@ -2,38 +2,59 @@ import { Router, Request, Response } from 'express';
 import { UserService } from '../services/user.service';
 import User from '../models/User';
 import db from '../config/db';
+import bcrypt from 'bcrypt';
+import { LoginDTO } from '../models/dto/LoginDTO';
+import jwt from 'jsonwebtoken';
+export default class AuthController {
 
-export default class UserController {
-    constructor(){
-    }
-    async get(req: Request, res: Response) {
-        
-        try {
-            // let userService = new UserService(db);
-            // const body = req.body;
-            // const user = await userService.findUserByEmail('test@gmail.com');
-            // res.send(user);
-        } catch (err) {}
+    constructor() {
     }
 
-    async getById(req: Request, res: Response) {
+    async login(req: Request, res: Response) {
         try {
-            const id = parseInt(req.params.id);
+            let login: LoginDTO = req.body;
+
             let userService = new UserService(db);
-            const user = await userService.findUserById(id);
-            res.send(user);
+            const user: User | null = await userService.findUserPassword(login.email);
+            if (!user || !user.password) {
+                res.status(401).send('User not found');
+                return;
+            }
+
+            const valid: boolean = await bcrypt.compare(
+                login.password,
+                user.password,
+            );
+
+            if(!process.env.KEY){
+                res.status(500).send('Internal Error');
+                return;
+            }
+            if (valid && process.env.KEY) {
+                const token = jwt.sign(
+                    { id: user.id },
+                    process.env.KEY,
+                    {
+                        expiresIn: '1 days',
+                    },
+                );
+                res.status(200).send({token: token, name: user.name +" "+ user.surname});
+                return;
+            }
+
+            res.status(401).send();
         } catch (err) {
             res.status(500).send('Internal Error');
         }
     }
 
-    async create(req: Request, res: Response) {
+    async forgot(req: Request, res: Response) {
         try {
             let user: User = req.body;
             let userService = new UserService(db);
             //check if email exists
             const foundUser = await userService.findUserByEmail(user.email);
-            if(foundUser){
+            if (foundUser) {
                 res.status(401).send('User already exists');
                 return;
             }
@@ -50,7 +71,7 @@ export default class UserController {
         }
     }
 
-    async update(req: Request, res: Response) {
+    async otp(req: Request, res: Response) {
         try {
             const id = parseInt(req.params.id);
             const user = req.body;
@@ -66,8 +87,5 @@ export default class UserController {
         } catch (err) {
             res.status(500).send('error updating user');
         }
-    }
-
-    async delete(req: Request, res: Response) {
     }
 }

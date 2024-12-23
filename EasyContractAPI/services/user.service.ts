@@ -21,7 +21,6 @@ export class UserService {
         WHERE email = ?;`;
         try {
             const [user] = await this.db.query<RowDataPacket[]>(sql, [email]);
-            console.log(user);
             if(user.length > 0){
                 return this.toUser(user[0]);
             }
@@ -45,6 +44,34 @@ export class UserService {
             const [result] = await this.db.query<RowDataPacket[]>(sql, [id]);
             if(result.length > 0){
                 return this.toUser(result[0]);
+            }
+            return null;
+        } catch (error: any) {
+            throw Error(error.message);
+        }
+    }
+
+    async findUserPassword(email: string): Promise<User | null> {
+        const sql = `
+        SELECT
+            id,
+            name,
+            surname,
+            email,
+            password
+        FROM user
+        WHERE email = ?;`;
+        try {
+            const [result] = await this.db.query<RowDataPacket[]>(sql, [email]);
+            if(result.length > 0){
+                let user : User = {
+                name: result[0].name,
+                surname: result[0].surname,
+                email: result[0].email,
+                id: result[0].id,
+                password: result[0].password
+                };
+                return user;
             }
             return null;
         } catch (error: any) {

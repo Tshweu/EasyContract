@@ -1,9 +1,10 @@
 import mysql, { Connection, createConnection } from 'mysql2/promise';
 // import { hashPassword } from './src/helpers/encrypt';
 import dotenv from 'dotenv';
+import { hashPassword } from '../helpers/encrypt';
 
 dotenv.config({
-    path: './.env.dev',
+    path: './.env',
 });
 
 const db_host = process.env.DB_HOST;
@@ -19,7 +20,7 @@ async function createTables() {
             password: db_password,
             multipleStatements: true,
         });
-        // const password = await hashPassword('john');
+        const password = await hashPassword('john');
         let sql = `
 		DROP DATABASE IF EXISTS test;
 		CREATE DATABASE IF NOT EXISTS test;
@@ -28,11 +29,11 @@ async function createTables() {
 			name VARCHAR(50) NOT NULL,
 			surname VARCHAR(50) NOT NULL,
 			email VARCHAR(50) NOT NULL,
-			password VARCHAR(50) NOT NULL,
+			password VARCHAR(255) NOT NULL,
 			UNIQUE(email)
 		);
 		INSERT INTO test.user(name,surname,email,password) 
-			VALUES ("John","Cena","john@cena.com","john");
+			VALUES ("John","Cena","john@cena.com","${password}");
 		CREATE TABLE test.template(
 			id INT AUTO_INCREMENT PRIMARY KEY,
 			title VARCHAR(20) NOT NULL,
@@ -92,6 +93,19 @@ async function createTables() {
                     date,   
                     contractId)
                 VALUES ("Created New Contract","2014-07-01 01:01:01",1);
+		
+		CREATE VIEW contract_stats 
+		AS SELECT 
+			COUNT(*) AS total,
+			COUNT(CASE WHEN status = 'new' THEN 1 END) AS new,
+			COUNT(CASE WHEN status = 'signed' THEN 1 END) AS signed,
+			COUNT(CASE WHEN status = 'canceled' THEN 1 END) AS canceled,
+			COUNT(CASE WHEN status = 'rejected' THEN 1 END) AS rejected,
+			COUNT(CASE WHEN status = 'viewed' THEN 1 END) AS viewed,
+			COUNT(CASE WHEN status = 'expired' THEN 1 END) AS expired,
+			userId
+		FROM test.contract
+		GROUP BY userId;
 `;
 
         await con.query(sql);
