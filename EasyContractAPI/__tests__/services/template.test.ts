@@ -3,6 +3,7 @@ import { Template } from '../../models/Template';
 import pool from '../../config/db';
 import { createTables, destroyTables } from '../../config/init';
 import { DateTime } from 'luxon';
+import { TemplateTitle } from '../../models/TemplateTitle';
 
 describe('template service tests', () => {
     const date = DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss');
@@ -41,6 +42,15 @@ describe('template service tests', () => {
 
         const foundTemplate: Template[] = await templateService.findAll(1);
         expect(foundTemplate.length).toBeGreaterThan(0);
+    });
+
+    test('should get all user templates titles ', async () => {
+        let templateService: TemplateService = new TemplateService(pool);
+
+        const foundTemplate: TemplateTitle[] | null = await templateService.findTitles(1);
+        if(foundTemplate){
+            expect(foundTemplate.length).toBeGreaterThan(0);
+        }
     });
 
     test('should update template by id', async () => {

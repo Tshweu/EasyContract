@@ -4,6 +4,7 @@ import { Contract } from '../../models/Contract';
 import { createTables, destroyTables } from '../../config/init';
 import { DateTime } from 'luxon';
 import { ContractRecipient } from '../../models/ContractRecipient';
+import { ContractStats } from '../../models/ContractStats';
 
 
 
@@ -56,6 +57,25 @@ describe('contract service tests', () => {
             2,
         );
         expect(foundContract).toEqual(contract);
+    });
+
+    test('should get contract stats', async () => {
+        let contractService: ContractService = new ContractService(pool);
+
+        const foundContract: ContractStats | null = await contractService.findStats(
+            1,
+        );
+        expect(foundContract).toBeTruthy();
+    });
+
+    test('should get all user contracts', async () => {
+        let contractService: ContractService = new ContractService(pool);
+
+        const foundContracts: Contract[] | null = await contractService.findAll(
+            1,
+        );
+        expect(foundContracts).toBeTruthy();
+        expect(foundContracts.length).toBeGreaterThan(0);
     });
 
     test('should update new contract', async () => {
