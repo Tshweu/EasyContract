@@ -1,0 +1,7 @@
+<form class="form-grid" [formGroup]="templateForm">
+    <mat-form-field>
+        <mat-label>Title</mat-label>
+        <input matInput name="title" formControlName="title" required />
+    </mat-form-field>
+    <editor #mce id="mce" formControlName="terms" [init]="init" />
+</form>

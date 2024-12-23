@@ -1,0 +1,20 @@
+<form class="form-grid" [formGroup]="contractForm">
+    <mat-form-field>
+      <mat-label>Title</mat-label>
+      <input
+        matInput
+        name="title"
+        formControlName="title"
+        required
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Template</mat-label>
+      <mat-select formControlName="templateId" name="templateId">
+        @for (template of templates; track template) {
+          <mat-option [value]="template.id">{{ template.title }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </form>
+  
