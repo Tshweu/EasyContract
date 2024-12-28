@@ -10,6 +10,9 @@ import { ManageContractComponent } from './views/contracts/manage-contract/manag
 import { SignUpComponent } from './auth/sign-up/sign-up.component';
 import { CreateContractComponent } from './views/contracts/create-contract/create-contract.component';
 import { CreateTemplateComponent } from './views/templates/create-template/create-template.component';
+import { ContractReviewComponent } from './contract-review/contract-review.component';
+import { VerifyContractComponent } from './contract-review/verify-contract/verify-contract.component';
+import { SubmitContractComponent } from './contract-review/submit-contract/submit-contract.component';
 
 export const routes: Routes = [
     {
@@ -45,22 +48,18 @@ export const routes: Routes = [
         ],
       },
       {
-        path: 'submission',
-        component: ViewsComponent,
+        path: 'contract/review',
+        component: ContractReviewComponent,
         // canActivate: [authCanActivateGuard],
         // canActivateChild: [authCanActivateChildGuard],
         children: [
           {
-            path: 'template/manage',
-            component: ManageTemplatesComponent,
+            path: 'verify/:id',
+            component: VerifyContractComponent,
           },
           {
-            path: 'template/create',
-            component: CreateTemplateComponent,
-          },
-          {
-            path: 'template/:id',
-            component: ViewTemplateComponent,
+            path: 'submit/:id',
+            component: SubmitContractComponent,
           }
         ],
       },
