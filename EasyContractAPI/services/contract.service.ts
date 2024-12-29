@@ -10,7 +10,7 @@ export class ContractService {
         this.db = db;
     }
 
-    async findStats(id: number): Promise<ContractStats | null>{
+    async findStats(id: number): Promise<ContractStats | null> {
         const sql = `
         SELECT 
             *
@@ -18,16 +18,16 @@ export class ContractService {
         WHERE userId = ?;`;
         try {
             const [result] = await this.db.query<RowDataPacket[]>(sql, [id]);
-            if(result.length > 0){
-                const stats : ContractStats = {
+            if (result.length > 0) {
+                const stats: ContractStats = {
                     total: result[0].total,
                     new: result[0].new,
                     signed: result[0].signed,
                     canceled: result[0].canceled,
                     rejected: result[0].rejected,
                     viewed: result[0].viewed,
-                    expired: result[0].expired
-                } 
+                    expired: result[0].expired,
+                };
                 return stats;
             }
             return null;
@@ -107,12 +107,14 @@ export class ContractService {
         }
     }
 
-    async createContract(contract: Contract, contractRecipient: ContractRecipient): Promise<number> {
+    async createContract(
+        contract: Contract,
+        contractRecipient: ContractRecipient,
+    ): Promise<number> {
         const con = await this.db.getConnection();
         await con.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
         await con.beginTransaction();
         try {
-
             //Get template terms
 
             let sql = `
@@ -162,7 +164,7 @@ export class ContractService {
             const [caResult] = await con.query<ResultSetHeader>(sql, [
                 'User Created Contracted',
                 contract.date,
-                contractResult.insertId
+                contractResult.insertId,
             ]);
 
             await con.commit();
@@ -171,9 +173,8 @@ export class ContractService {
             con.rollback();
             console.log('throw');
             throw new Error(error.message);
-        }
-        finally{
-            this.db.releaseConnection(con)
+        } finally {
+            this.db.releaseConnection(con);
             con.release();
         }
     }
@@ -197,6 +198,73 @@ export class ContractService {
         }
     }
 
+    async validateOTP(
+        id: number,
+        otp: number,
+        idNumber: string,
+        date: string,
+    ): Promise<boolean> {
+        const con = await this.db.getConnection();
+        await con.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+        await con.beginTransaction();
+        try {
+            let sql = `
+            SELECT 
+                c.id,
+                c.title,
+                c.terms,
+                c.date,
+                c.completed,
+                c.status,
+                c.otp,
+                c.userId,
+                cr.idNumber,
+                cr.name,
+                cr.surname
+            FROM contract AS c
+            LEFT JOIN contract_recipient AS cr
+            ON cr.contractId = c.id
+            WHERE c.id = ? AND c.otp = ? AND cr.idNumber = ?;`;
+            const [foundContract] = await con.query<RowDataPacket[]>(sql, [
+                id,
+                otp,
+                idNumber,
+            ]);
+
+            sql = `
+            INSERT INTO contract_audit(
+                action,
+                date,   
+                contractId)
+            VALUES (?,?,?)
+            `;
+            if (!(foundContract.length > 0)) {
+                const [caResult] = await con.query<ResultSetHeader>(sql, [
+                    `Contract recipient attempted to verify details and enter otp and failed.`,
+                    date,
+                    id,
+                ]);
+                return false;
+            }
+
+            const [caResult] = await con.query<ResultSetHeader>(sql, [
+                `Contract recipient ${foundContract[0].name}  ${foundContract[0].surname} successfully attempted to verify details and enter otp`,
+                date,
+                id,
+            ]);
+
+            await con.commit();
+            return true;
+        } catch (error: any) {
+            con.rollback();
+            console.log(error);
+            throw Error('Failed to validate otp');
+        } finally {
+            this.db.releaseConnection(con);
+            con.release();
+        }
+    }
+
     private toContract(result: RowDataPacket): Contract {
         return {
             id: result.id,
@@ -212,13 +280,13 @@ export class ContractService {
                 surname: result.surname,
                 idNumber: result.idNumber,
                 email: result.email,
-            }
+            },
         };
     }
 
     private toContractList(result: RowDataPacket[]): Contract[] {
         let contractList: Contract[] = [];
-        for(let i = 0;i< result.length;i++){
+        for (let i = 0; i < result.length; i++) {
             contractList.push({
                 id: result[i].id,
                 title: result[i].title,
@@ -232,7 +300,7 @@ export class ContractService {
                     surname: result[i].surname,
                     idNumber: result[i].idNumber,
                     email: result[i].email,
-                }
+                },
             });
         }
         return contractList;

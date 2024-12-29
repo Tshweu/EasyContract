@@ -1,16 +1,10 @@
 import { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import pool from '../config/db';
-import Mailjet, { Client } from 'node-mailjet';
 import sgMail from '@sendgrid/mail';
 
 export class EmailService {
-    // mailjet: Client;
 
     constructor() {
-        // this.mailjet = Mailjet.apiConnect(
-        //     process.env.MJ_APIKEY_PUBLIC!,
-        //     process.env.MJ_APIKEY_PRIVATE!,
-        // );
     }
 
     async sendMail(email: string, subject: string, message: string, url: string): Promise<boolean> {

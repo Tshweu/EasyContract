@@ -78,7 +78,73 @@ async function createTables() {
                     status,
                     date,
                     userId)
-                VALUES ("The first agreement","saldjvbl jBSLKCDBjc ljb BLDBDBKJ BB ","new","2014-07-01 01:01:01",1);
+                VALUES ("The first agreement","<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>{{name}}{{surname}}</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>&nbsp;</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>&nbsp;</p>
+				<p>{{name}}{{surname}}</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>&nbsp;</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>{{name}}{{surname}}</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>&nbsp;</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>{{name}}{{surname}}</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>&nbsp;</p>
+				<p>&nbsp;</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>Yoh these terms are crazy</p>
+				<p>It really is awesome</p>
+				<p>{{idNumber}}</p>","new","2014-07-01 01:01:01",1);
 
 		INSERT INTO test.contract_recipient(
                     name,
@@ -114,8 +180,8 @@ async function createTables() {
         console.log(err.message);
     }
 }
-async function destroyTables(){
-	try {
+async function destroyTables() {
+    try {
         const con: Connection = await createConnection({
             host: db_host,
             user: db_user,

@@ -21,7 +21,7 @@ class ContractRoutes {
         // Update a Contract with id
         this.router.put('/:id',verifyToken, this.controller.update);
         // Validate contract otp
-        // this.router.post('/validate/:id', this.controller.validate);
+        this.router.post('/validate/:id', this.controller.validate);
         // Recipient contract submission
         // this.router.put('/sign/:id', this.controller.sign);
     }

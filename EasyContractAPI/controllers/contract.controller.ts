@@ -10,6 +10,7 @@ import { DateTime } from 'luxon';
 import { ContractRecipientService } from '../services/contract-recipient.service';
 import { ContractRecipient } from '../models/ContractRecipient';
 import { EmailService } from '../services/email.service';
+import jwt from 'jsonwebtoken';
 
 export default class ContractController {
     async get(req: Request, res: Response) {
@@ -54,8 +55,8 @@ export default class ContractController {
                 await contractRecipientService.findContractRecipientByContractId(
                     contractId,
                 );
-            
-            contract.recipient = contractRecipient
+
+            contract.recipient = contractRecipient;
             res.send(contract);
         } catch (err) {
             res.status(500).send('Internal Error');
@@ -94,9 +95,14 @@ export default class ContractController {
 
             if (result > 0) {
                 const email = new EmailService();
-                const emailResult = await email.sendMail('t.t.sephiri@gmail.com','Contract','Hey there','dhalkhdakd');
-                
-                if(emailResult)6 res.status(201).send({});
+                const emailResult = await email.sendMail(
+                    't.t.sephiri@gmail.com',
+                    contract.title,
+                    'Hey there',
+                    'dhalkhdakd',
+                );
+
+                if (emailResult) res.status(201).send({});
                 return;
             } else {
                 res.status(500).send('error creating contract');
@@ -122,6 +128,39 @@ export default class ContractController {
             );
         } catch (error) {
             res.status(500).send('error updating contract');
+        }
+    }
+
+    async validate(req: Request, res: Response) {
+        try {
+            const body = req.body;
+            const date = DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss');
+            const contractId: number = parseInt(req.params.id);
+            const contractService = new ContractService(db);
+
+            const valid = await contractService.validateOTP(
+                contractId,
+                body.otp,
+                body.idNumber,
+                date
+            );
+
+            if (!process.env.KEY) {
+                res.status(500).send('Internal Error');
+                return;
+            }
+            //create different key for contracts
+            if (valid) {
+                const token = jwt.sign({ id: contractId }, process.env.KEY, {
+                    expiresIn: '1 days',
+                });
+                res.status(200).send({ token: token });
+                return;
+            }
+            res.status(403).send('Invalid Details');
+        } catch (error) {
+            console.log(error);
+            res.status(500).send('error validating contract');
         }
     }
 }
