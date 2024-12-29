@@ -38,7 +38,6 @@ export class LoginComponent {
       this.user_service.login(this.login_form.value).subscribe({
         next: (res: any) => {
           this.loading = false;
-          console.log(res);
           sessionStorage.setItem('token', res.token);
           this.router.navigate(['views/contract/manage']);
         },
