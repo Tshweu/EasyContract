@@ -170,16 +170,18 @@ export class ContractService {
             await con.commit();
             return contractResult.affectedRows;
         } catch (error: any) {
-            con.rollback();
+            await con.rollback();
             console.log('throw');
-            throw new Error(error.message);
+            throw new Error('Error Creating Contract');
         } finally {
             this.db.releaseConnection(con);
             con.release();
         }
     }
 
-    async updateContractStatus(id: number, status: string) {
+    async updateContractStatus(id: number, status: string,date: string) {
+        const con = await this.db.getConnection();
+        await con.beginTransaction();
         try {
             let sql = `
             UPDATE contract(
@@ -192,9 +194,30 @@ export class ContractService {
                 id,
                 status,
             ]);
+            
+            sql = `
+            INSERT INTO contract_audit(
+                action,
+                date,   
+                contractId)
+            VALUES (?,?,?)
+            `;
+            
+            const [caResult] = await con.query<ResultSetHeader>(sql, [
+                `Contract status was updated to ${status}`,
+                date,
+                id,
+            ]);
+
+            await con.commit();
             return result.affectedRows;
         } catch (error: any) {
-            throw new Error(error.message);
+            await con.rollback();
+            console.log(error);
+            throw new Error('Status update error');
+        } finally {
+            this.db.releaseConnection(con);
+            con.release();
         }
     }
 
@@ -205,7 +228,6 @@ export class ContractService {
         date: string,
     ): Promise<boolean> {
         const con = await this.db.getConnection();
-        await con.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
         await con.beginTransaction();
         try {
             let sql = `
@@ -245,20 +267,19 @@ export class ContractService {
                     id,
                 ]);
                 return false;
+            }else{
+                const [caResult] = await con.query<ResultSetHeader>(sql, [
+                    `Contract recipient ${foundContract[0].name}  ${foundContract[0].surname} successfully attempted to verify details and enter otp`,
+                    date,
+                    id,
+                ]);
             }
-
-            const [caResult] = await con.query<ResultSetHeader>(sql, [
-                `Contract recipient ${foundContract[0].name}  ${foundContract[0].surname} successfully attempted to verify details and enter otp`,
-                date,
-                id,
-            ]);
-
             await con.commit();
             return true;
         } catch (error: any) {
-            con.rollback();
+            await con.rollback();
             console.log(error);
-            throw Error('Failed to validate otp');
+            throw new Error('Validation Error');
         } finally {
             this.db.releaseConnection(con);
             con.release();

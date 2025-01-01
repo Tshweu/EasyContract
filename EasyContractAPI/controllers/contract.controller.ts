@@ -158,9 +158,11 @@ export default class ContractController {
                 return;
             }
             res.status(403).send('Invalid Details');
+            return;
         } catch (error) {
             console.log(error);
             res.status(500).send('error validating contract');
+            return;
         }
     }
 }
