@@ -203,7 +203,7 @@ VALUES
     ("Created New Contract", "2014-07-01 01:01:01", 1);
 
 CREATE VIEW
-    contract_stats AS
+    test.contract_stats AS
 SELECT
     COUNT(*) AS total,
     COUNT(
