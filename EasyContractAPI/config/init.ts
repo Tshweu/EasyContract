@@ -160,7 +160,7 @@ async function createTables() {
                     contractId)
                 VALUES ("Created New Contract","2014-07-01 01:01:01",1);
 		
-		CREATE VIEW contract_stats 
+		CREATE VIEW test.contract_stats 
 		AS SELECT 
 			COUNT(*) AS total,
 			COUNT(CASE WHEN status = 'new' THEN 1 END) AS new,
