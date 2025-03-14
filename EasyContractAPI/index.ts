@@ -10,8 +10,9 @@ export default class App {
     port = process.env.PORT || 3000;
     private app: Express;
 
-    constructor(app: Express) {
-        new Routes(app);
+    constructor(app: Express,db: any) {
+        new Routes(app,db);
+        console.log(db);
         this.app = app;
     }
 
