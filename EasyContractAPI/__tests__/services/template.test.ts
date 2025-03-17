@@ -1,9 +1,9 @@
 import { TemplateService } from '../../services/template.service';
-import { Template } from '../../models/Template';
+import { Template } from '../../entities/Template';
 import pool from '../../config/db';
 import { createTables, destroyTables } from '../../config/init';
 import { DateTime } from 'luxon';
-import { TemplateTitle } from '../../models/TemplateTitle';
+import { TemplateTitle } from '../../entities/TemplateTitle';
 
 describe('template service tests', () => {
     const date = DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss');
@@ -66,7 +66,7 @@ describe('template service tests', () => {
     test('should get template by id', async () => {
         let templateService: TemplateService = new TemplateService(pool);
         template.id = 1;
-        const foundTemplate: Template = await templateService.findTemplateById(
+        const foundTemplate: Template | null = await templateService.findTemplateById(
             1,
         );
         expect(foundTemplate).toStrictEqual(template);

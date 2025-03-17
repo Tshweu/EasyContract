@@ -1,6 +1,6 @@
 import { ContractRecipientService } from '../../services/contract-recipient.service';
 import pool from '../../config/db';
-import { ContractRecipient } from '../../models/ContractRecipient';
+import { ContractRecipient } from '../../entities/ContractRecipient';
 import { createTables, destroyTables } from '../../config/init';
 
 describe('contractRecipient service tests', () => {

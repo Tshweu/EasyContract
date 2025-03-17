@@ -1,39 +1,38 @@
 import { Router, Request, Response } from 'express';
 import { ContractService } from '../services/contract.service';
-import { Contract } from '../models/Contract';
+import { Contract } from '../entities/Contract';
 import db from '../config/db';
-import { ContractStats } from '../models/ContractStats';
+import { ContractStats } from '../entities/ContractStats';
 import { TemplateService } from '../services/template.service';
-import { Template } from '../models/Template';
+import { Template } from '../entities/Template';
 import { contractDTO } from '../models/dto/ContractDTO';
 import { DateTime } from 'luxon';
 import { ContractRecipientService } from '../services/contract-recipient.service';
-import { ContractRecipient } from '../models/ContractRecipient';
+import { ContractRecipient } from '../entities/ContractRecipient';
 import { EmailService } from '../services/email.service';
 import jwt from 'jsonwebtoken';
 
 export default class ContractController {
-    async get(req: Request, res: Response) {
+
+    constructor(private contractService: ContractService){}
+
+    get = async(req: Request, res: Response) => {
         try {
             const userId: number = parseInt(req.body.userId);
-
-            const contractService = new ContractService(db);
             //pass user id into service
-            const contract: Contract[] = await contractService.findAll(userId);
+            const contract: Contract[] = await this.contractService.findAll(userId);
             res.send(contract);
         } catch (err) {
             res.status(500).send(err);
         }
     }
 
-    async getStats(req: Request, res: Response) {
+    getStats = async (req: Request, res: Response) => {
         try {
             const userId: number = parseInt(req.body.userId);
-
-            const contractService = new ContractService(db);
             //pass user id into service
             const contract: ContractStats | null =
-                await contractService.findStats(userId);
+                await this.contractService.findStats(userId);
             res.send(contract);
         } catch (err) {
             console.log(err);
@@ -44,10 +43,9 @@ export default class ContractController {
     async getById(req: Request, res: Response) {
         try {
             const contractId: number = parseInt(req.params.id);
-            const contractService = new ContractService(db);
             const contractRecipientService = new ContractRecipientService(db);
 
-            const contract: Contract = await contractService.findContractById(
+            const contract: Contract = await this.contractService.findContractById(
                 contractId,
             );
 
@@ -77,8 +75,7 @@ export default class ContractController {
                 res.status(400).send('Template does not exist');
                 return;
             }
-
-            const contractService = new ContractService(db);
+            
             const contract: Contract = {
                 title: contractDTO.title,
                 terms: template.terms,
@@ -88,7 +85,7 @@ export default class ContractController {
                 completed: false,
                 recipient: contractDTO.recipient,
             };
-            const result = await contractService.createContract(
+            const result = await this.contractService.createContract(
                 contract,
                 contract.recipient,
             );
@@ -120,9 +117,8 @@ export default class ContractController {
             const body = req.body;
 
             const contractId: number = parseInt(req.params.id);
-            const contractService = new ContractService(db);
 
-            const contract = await contractService.updateContractById(
+            const contract = await this.contractService.updateContractById(
                 contractId,
                 body,
             );
@@ -136,9 +132,8 @@ export default class ContractController {
             const body = req.body;
             const date = DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss');
             const contractId: number = parseInt(req.params.id);
-            const contractService = new ContractService(db);
 
-            const valid = await contractService.validateOTP(
+            const valid = await this.contractService.validateOTP(
                 contractId,
                 body.otp,
                 body.idNumber,

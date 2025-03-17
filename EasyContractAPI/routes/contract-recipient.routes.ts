@@ -5,9 +5,8 @@ import verifyToken from "../helpers/token";
 
 class ContractRecipientRoutes {
   router = Router();
-  controller = new ContractRecipientController();
 
-  constructor() {
+  constructor(private controller: ContractRecipientController) {
     this.intializeRoutes();
   }
 
@@ -19,4 +18,4 @@ class ContractRecipientRoutes {
   }
 }
 
-export default new ContractRecipientRoutes().router;
+export default ContractRecipientRoutes;

@@ -1,7 +1,7 @@
 import { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
-import { Contract } from '../models/Contract';
-import { ContractRecipient } from '../models/ContractRecipient';
-import { ContractStats } from '../models/ContractStats';
+import { Contract } from '../entities/Contract';
+import { ContractRecipient } from '../entities/ContractRecipient';
+import { ContractStats } from '../entities/ContractStats';
 
 export class ContractService {
     private db: Pool;

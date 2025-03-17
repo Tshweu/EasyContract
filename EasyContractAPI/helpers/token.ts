@@ -7,11 +7,12 @@ import { Request, Response } from 'express';
 function verifyToken(req: Request, res: Response, next: any) {
     //use env variable
     const key = process.env.KEY;
-    //check if authorization exists
+    //check if secret key exists
     if(!key){
         res.status(401).send('Unauthorized request, Internal Server Error');
         return;
     }
+    //check if authorization headers exist
     if (!req.headers.authorization) {
         res.status(401).send('Unauthorized request');
         return;
@@ -31,6 +32,7 @@ function verifyToken(req: Request, res: Response, next: any) {
                 return;
             }
             req.body.userId = payload.id;
+            req.body.companyId = payload.companyId;
             next();
         }
     }

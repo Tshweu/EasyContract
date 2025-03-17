@@ -2,6 +2,12 @@ DROP DATABASE IF EXISTS test;
 
 CREATE DATABASE IF NOT EXISTS test;
 
+CREATE TABLE 
+    test.company(
+        id int AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL
+    );
+
 CREATE TABLE
     test.user (
         id int AUTO_INCREMENT PRIMARY KEY,
@@ -9,17 +15,29 @@ CREATE TABLE
         surname VARCHAR(50) NOT NULL,
         email VARCHAR(50) NOT NULL,
         password VARCHAR(255) NOT NULL,
-        UNIQUE (email)
+        roleId int NOT NULL,
+        companyId int NOT NULL,
+        UNIQUE (email),
+        FOREIGN KEY(companyId) REFERENCES company(id)
     );
 
 INSERT INTO
-    test.user (name, surname, email, password)
+    test.company (name)
+VALUES
+    (
+        "You Can't See Mee Holdings"
+    );
+
+INSERT INTO
+    test.user (name, surname, email, password, roleId, companyId)
 VALUES
     (
         "John",
         "Cena",
         "john@cena.com",
-        "$2b$10$EzR9sx7toswINYQyi4F4MOJxf1LreMa3kOtqMwpL2LX9w1xQMEyyK"
+        "$2b$10$EzR9sx7toswINYQyi4F4MOJxf1LreMa3kOtqMwpL2LX9w1xQMEyyK",
+        1,
+        1
     );
 
 CREATE TABLE
@@ -30,8 +48,10 @@ CREATE TABLE
         date DATETIME NOT NULL,
         userId int NOT NULL,
         version int NOT NULL,
+        companyId int NOT NULL,
         FOREIGN KEY (userId) REFERENCES user(id),
-        UNIQUE (title)
+        UNIQUE (title),
+        FOREIGN KEY(companyId) REFERENCES company(id)
     );
 
 CREATE TABLE
@@ -44,7 +64,9 @@ CREATE TABLE
         completed BOOLEAN DEFAULT false NOT NULL,
         status VARCHAR(50),
         otp VARCHAR(6),
-        FOREIGN KEY (userId) REFERENCES user(id)
+        companyId int NOT NULL,
+        FOREIGN KEY (userId) REFERENCES user(id),
+        FOREIGN KEY(companyId) REFERENCES company(id)
     );
 
 CREATE TABLE
@@ -68,7 +90,7 @@ CREATE TABLE
     );
 
 INSERT INTO
-    test.contract (title, terms, status, date, userId)
+    test.contract (title, terms, status, date, userId, companyId)
 VALUES
     (
         "The first agreement",
@@ -141,6 +163,7 @@ VALUES
  <p>{{idNumber}}</p>",
         "new",
         "2014-07-01 01:01:01",
+        1,
         1
     ),
     (
@@ -148,6 +171,7 @@ VALUES
         "saldjvbl jBSLKCDBjc ljb BLDBDBKJ BB ",
         "new",
         "2014-07-01 01:01:01",
+        1,
         1
     ),
     (
@@ -155,6 +179,7 @@ VALUES
         "saldjvbl jBSLKCDBjc ljb BLDBDBKJ BB ",
         "canceled",
         "2014-07-01 01:01:01",
+        1,
         1
     ),
     (
@@ -162,6 +187,7 @@ VALUES
         "saldjvbl jBSLKCDBjc ljb BLDBDBKJ BB ",
         "signed",
         "2014-07-01 01:01:01",
+        1,
         1
     );
 

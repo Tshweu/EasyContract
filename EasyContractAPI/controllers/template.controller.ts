@@ -1,46 +1,44 @@
 import { Router, Request, Response } from 'express';
 import { TemplateService } from '../services/template.service';
-import { Template } from '../models/Template';
-import db from '../config/db';
-import { TemplateTitle } from '../models/TemplateTitle';
+import { Template } from '../entities/Template';
+import { TemplateTitle } from '../entities/TemplateTitle';
 import { DateTime } from 'luxon';
+import { CreateRequest } from '../models/template/CreateRequest';
 
 export default class TemplateController {
-    async get(req: Request, res: Response) {
-        try {
-            const templateService = new TemplateService(db);
 
+    constructor(private templateService: TemplateService) { }
+
+    get = async (req: Request, res: Response) => {
+        try {
             const userId: number = parseInt(req.body.userId);
             //pass user id into service
-            const template: Template[] = await templateService.findAll(userId);
+            const template: Template[] = await this.templateService.findAll(userId);
             res.send(template);
         } catch (err) {
             res.status(500).send(err);
         }
     }
 
-    async getTitles(req: Request, res: Response) {
+    getTitles = async (req: Request, res: Response) => {
         try {
-            const templateService = new TemplateService(db);
-
             const userId: number = parseInt(req.params.id);
             //pass user id into service
             const template: TemplateTitle[] | null =
-                await templateService.findTitles(userId);
+                await this.templateService.findTitles(userId);
             if (template) {
                 res.status(200).send(template);
             }
             res.status(204).send();
-        } catch (err) {}
+        } catch (err) { }
     }
 
-    async getById(req: Request, res: Response) {
+    getById = async (req: Request, res: Response) => {
         try {
             const id = parseInt(req.params.id);
-            const templateService = new TemplateService(db);
 
             const template: Template | null =
-                await templateService.findTemplateById(id);
+                await this.templateService.findTemplateById(id);
             if (!template) {
                 res.status(404).send('Template not found');
                 return;
@@ -51,18 +49,15 @@ export default class TemplateController {
         }
     }
 
-    async create(req: Request, res: Response) {
+    create = async (req: Request, res: Response) => {
         try {
             const date = DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss');
-            const template: Template = req.body;
-            template.date = date;
-            template.version = 1;
-            const templateService = new TemplateService(db);
+            const template: CreateRequest = req.body;
 
             //check if template with title exists
-            const found = await templateService.doesTemplateTitleExist(
+            const found = await this.templateService.doesTemplateTitleExist(
                 template.title,
-                template.userId,
+                template.userId
             );
 
             if (found) {
@@ -70,9 +65,8 @@ export default class TemplateController {
                 return;
             }
 
-            const result = await templateService.createTemplate(
-                template,
-                template.userId,
+            const result = await this.templateService.createTemplate(
+                template
             );
 
             if (result > 0) {
@@ -87,28 +81,27 @@ export default class TemplateController {
         }
     }
 
-    async update(req: Request, res: Response) {
+    update = async (req: Request, res: Response) => {
         try {
             const body = req.body;
-            const templateService = new TemplateService(db);
 
             //Find existing template
             const templateId: number = parseInt(req.params.id);
-            const template: Template | null = await templateService.findTemplateById(templateId);
+            const template: Template | null = await this.templateService.findTemplateById(templateId);
 
             //If template doesn't exist return error
-            if(!template){
+            if (!template) {
                 res.status(404).send('template not found');
                 return;
             }
             //If template exists check that it belongs to the user
-            if(!(template.userId === body.userId)){
+            if (!(template.userId === body.userId)) {
                 res.status(403).send('unauthorised');
                 return;
             }
             body.version = template.version + 1;
             //Update template
-            await templateService.updateTemplateById(templateId, body);
+            await this.templateService.updateTemplateById(templateId, body);
             res.status(200).send('Success')
             return;
         } catch (error) {
@@ -116,12 +109,10 @@ export default class TemplateController {
         }
     }
 
-    async delete(req: Request, res: Response) {
+    delete = async (req: Request, res: Response) => {
         try {
-            const templateService = new TemplateService(db);
-
             const templateId: number = parseInt(req.params.id);
-            const template = await templateService.deleteTemplateById(
+            const template = await this.templateService.deleteTemplateById(
                 templateId,
             );
         } catch (error) {

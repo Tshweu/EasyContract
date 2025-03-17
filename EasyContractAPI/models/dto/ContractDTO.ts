@@ -1,4 +1,4 @@
-import { ContractRecipient } from "../ContractRecipient";
+import { ContractRecipient } from "../../entities/ContractRecipient";
 
 export interface contractDTO {
     title: string;

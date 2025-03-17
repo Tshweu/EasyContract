@@ -8,10 +8,14 @@ import Routes from '../..';
 import userRoutes from '../../routes/user.routes';
 import UserDTO from '../../models/dto/UserDTO';
 import { LoginDTO } from '../../models/dto/LoginDTO';
+import { mocked } from 'jest-mock';
 
+const dbPool = mocked(db);
 const app: Express = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+jest.mock('../../config/db');
 
 describe('Auth tests', () => {
     let user: LoginDTO = {

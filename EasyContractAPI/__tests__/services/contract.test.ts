@@ -1,24 +1,15 @@
 import { ContractService } from '../../services/contract.service';
 import pool from '../../config/db';
-import { Contract } from '../../models/Contract';
+import { Contract } from '../../entities/Contract';
 import { createTables, destroyTables } from '../../config/init';
 import { DateTime } from 'luxon';
-import { ContractRecipient } from '../../models/ContractRecipient';
-import { ContractStats } from '../../models/ContractStats';
+import { ContractRecipient } from '../../entities/ContractRecipient';
+import { ContractStats } from '../../entities/ContractStats';
 
 
 
 describe('contract service tests', () => {
-    let contract: Contract = {
-        id: 2,
-        title: 'The contract',
-        terms: 'Hey how did you; sdlnsnan safjda; dsnna',
-        completed: false,
-        date: DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss'),
-        userId: 1,
-        status: 'new',
-        otp: null,
-    };
+
     let contractRecipient: ContractRecipient = {
         id: 2,
         name: 'test',
@@ -28,6 +19,18 @@ describe('contract service tests', () => {
         contractId: 2,
     };
 
+    let contract: Contract = {
+        id: 2,
+        title: 'The contract',
+        terms: 'Hey how did you; sdlnsnan safjda; dsnna',
+        completed: false,
+        date: DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss'),
+        userId: 1,
+        status: 'new',
+        otp: null,
+        recipient: contractRecipient
+    };
+    
     beforeAll(() => {
         return createTables();
     });

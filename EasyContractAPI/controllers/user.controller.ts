@@ -1,39 +1,37 @@
 import { Router, Request, Response } from 'express';
 import { UserService } from '../services/user.service';
-import User from '../models/User';
+import User from '../models/user/CreateRequest';
 import db from '../config/db';
 
 export default class UserController {
-    constructor(){
+    constructor(private userService: UserService) {
     }
-    async get(req: Request, res: Response) {
-        
+    get = async(req: Request, res: Response) => {
+
         try {
-            // let userService = new UserService(db);
             // const body = req.body;
-            // const user = await userService.findUserByEmail('test@gmail.com');
             // res.send(user);
-        } catch (err) {}
+        } catch (err) { }
     }
 
-    async getById(req: Request, res: Response) {
+    getById = async (req: Request, res: Response) => {
+        console.log("get it")
         try {
             const id = parseInt(req.params.id);
-            let userService = new UserService(db);
-            const user = await userService.findUserById(id);
+            const user = await this.userService.findUserById(id);
             res.send(user);
         } catch (err) {
-            res.status(500).send('Internal Error');
+            res.status(500).send('Internal Error' + err);
         }
     }
 
-    async create(req: Request, res: Response) {
+    create = async (req: Request, res: Response) => {
         try {
             let user: User = req.body;
             let userService = new UserService(db);
             //check if email exists
             const foundUser = await userService.findUserByEmail(user.email);
-            if(foundUser){
+            if (foundUser) {
                 res.status(401).send('User already exists');
                 return;
             }
@@ -50,7 +48,7 @@ export default class UserController {
         }
     }
 
-    async update(req: Request, res: Response) {
+    update = async (req: Request, res: Response) => {
         try {
             const id = parseInt(req.params.id);
             const user = req.body;
@@ -68,6 +66,6 @@ export default class UserController {
         }
     }
 
-    async delete(req: Request, res: Response) {
+    delete = async (req: Request, res: Response) => {
     }
 }

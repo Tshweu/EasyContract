@@ -1,5 +1,5 @@
 import { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
-import { ContractRecipient } from '../models/ContractRecipient';
+import { ContractRecipient } from '../entities/ContractRecipient';
 
 export class ContractRecipientService {
     private db: Pool;

@@ -1,7 +1,8 @@
 import { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
-import { Template } from '../models/Template';
+import { Template } from '../entities/Template';
 import { TemplateDTO } from '../models/dto/TemplateDTO';
-import { TemplateTitle } from '../models/TemplateTitle';
+import { TemplateTitle } from '../entities/TemplateTitle';
+import { CreateRequest } from '../models/template/CreateRequest';
 
 export class TemplateService {
     private db: Pool;
@@ -15,9 +16,9 @@ export class TemplateService {
         SELECT 
             id,
             title,
-            userId
+            userId,
         FROM template
-        WHERE userId = ?;`;
+        WHERE companyId = ?;`;
         try {
             const [result] = await this.db.query<RowDataPacket[]>(sql, [id]);
             if(result.length > 0){
@@ -37,9 +38,9 @@ export class TemplateService {
             terms,
             version,
             date,
-            userId
+            companyId
         FROM template
-        WHERE userId = ?;`;
+        WHERE companyId = ?;`;
         try {
             const [result] = await this.db.query<RowDataPacket[]>(sql, [id]);
 
@@ -56,7 +57,7 @@ export class TemplateService {
             title
         FROM template
         WHERE title = ?
-        AND userId = ?;`;
+        AND companyId = ?;`;
         try {
             const [result] = await this.db.query<RowDataPacket[]>(sql, [title,id]);
             if(result.length > 0){
@@ -76,7 +77,8 @@ export class TemplateService {
             terms,
             version,
             date,
-            userId
+            userId,
+            companyId
         FROM template
         WHERE id = ?;`;
         try {
@@ -110,23 +112,26 @@ export class TemplateService {
         }
     }
 
-    async createTemplate(template: Template, userId: number): Promise<number> {
+    async createTemplate(template: CreateRequest): Promise<number> {
         try {
+            const version = 1;
             let sql = `
             INSERT INTO template(
                 title,
                 terms,
                 date,
                 version,
-                userId)
-            VALUES (?,?,?,?,?)
+                userId,
+                companyId)
+            VALUES (?,?,?,?,?,?)
             `;
             const [result] = await this.db.query<ResultSetHeader>(sql, [
                 template.title,
                 template.terms,
                 template.date,
-                template.version,
-                userId
+                version,
+                template.userId,
+                template.companyId
             ]);
             return result.affectedRows;
         } catch (error: any) {
@@ -155,7 +160,8 @@ export class TemplateService {
             terms: result.terms,
             date: result.date,
             version: result.version,
-            userId: result.userId
+            userId: result.userId,
+            companyId: result.companyId
         }
     }   
 

@@ -1,6 +1,6 @@
 import { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import pool from '../config/db';
-import User from '../models/User';
+import User from '../entities/User';
 import UserDTO from '../models/dto/UserDTO';
 
 export class UserService {
@@ -16,7 +16,9 @@ export class UserService {
             id,
             name,
             surname,
-            email
+            email,
+            roleId,
+            companyId
         FROM user
         WHERE email = ?;`;
         try {
@@ -37,41 +39,15 @@ export class UserService {
             id,
             name,
             surname,
-            email
+            email,
+            roleId,
+            companyId
         FROM user
         WHERE id = ?;`;
         try {
             const [result] = await this.db.query<RowDataPacket[]>(sql, [id]);
             if(result.length > 0){
                 return this.toUser(result[0]);
-            }
-            return null;
-        } catch (error: any) {
-            throw Error(error.message);
-        }
-    }
-
-    async findUserPassword(email: string): Promise<User | null> {
-        const sql = `
-        SELECT
-            id,
-            name,
-            surname,
-            email,
-            password
-        FROM user
-        WHERE email = ?;`;
-        try {
-            const [result] = await this.db.query<RowDataPacket[]>(sql, [email]);
-            if(result.length > 0){
-                let user : User = {
-                name: result[0].name,
-                surname: result[0].surname,
-                email: result[0].email,
-                id: result[0].id,
-                password: result[0].password
-                };
-                return user;
             }
             return null;
         } catch (error: any) {
@@ -107,14 +83,18 @@ export class UserService {
                 name,
                 surname,
                 email,
-                password)
-            VALUES (?,?,?,?)
+                password,
+                roleId,
+                companyId)
+            VALUES (?,?,?,?,?,?)
             `;
             const [result] = await this.db.query<ResultSetHeader>(sql, [
                 user.name,
                 user.surname,
                 user.email,
                 user.password,
+                user.roleId,
+                user.companyId
             ]);
             return result.affectedRows;
         } catch (error: any) {
@@ -128,6 +108,8 @@ export class UserService {
             name: result.name,
             surname: result.surname,
             email: result.email,
+            companyId: result.companyId,
+            roleId: result.roleId,
             id: result.id,
         };
     }

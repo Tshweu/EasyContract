@@ -1,6 +1,6 @@
 import { UserService } from '../../services/user.service';
 import pool from '../../config/db';
-import User from '../../models/User';
+import User from '../../models/user/CreateRequest';
 import { createTables, destroyTables } from '../../config/init';
 
 describe('user service tests', () => {

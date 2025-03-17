@@ -1,6 +1,6 @@
 import { ContractAuditService } from '../../services/contract-audit.service';
 import pool from '../../config/db';
-import { ContractAudit } from '../../models/ContractAudit';
+import { ContractAudit } from '../../entities/ContractAudit';
 import { createTables, destroyTables } from '../../config/init';
 
 describe('contract audit service tests', () => {

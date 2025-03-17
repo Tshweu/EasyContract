@@ -44,7 +44,7 @@ async function createTables() {
 			FOREIGN KEY (userId) REFERENCES user(id),
 			UNIQUE(title)
 		);
-		CREATE TABLE test.contract(
+		CREATE TABLE test.contract (
 			id INT AUTO_INCREMENT PRIMARY KEY,
 			title VARCHAR(100) NOT NULL,
 			terms LONGTEXT NOT NULL,
@@ -53,7 +53,9 @@ async function createTables() {
 			completed BOOLEAN DEFAULT false NOT NULL,
 			status VARCHAR(50),
 			otp VARCHAR(6),
-			FOREIGN KEY (userId) REFERENCES user(id)
+			companyId int NOT NULL,
+			FOREIGN KEY (userId) REFERENCES user(id),
+			FOREIGN KEY(companyId) REFERENCES company(id)
 		);
 		CREATE TABLE test.contract_recipient(
 			id INT AUTO_INCREMENT PRIMARY KEY,

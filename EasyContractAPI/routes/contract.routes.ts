@@ -4,16 +4,15 @@ import verifyToken from '../helpers/token';
 
 class ContractRoutes {
     router = Router();
-    controller = new ContractController();
 
-    constructor() {
+    constructor(private controller: ContractController) {
         this.intializeRoutes();
     }
 
     intializeRoutes() {
-        // Create a new Contract
+        // Create a new contract
         this.router.post('/',verifyToken, this.controller.create);
-        // Retrieve All contracts
+        // Retrieve all contracts
         this.router.get('/',verifyToken, this.controller.get);
         this.router.get('/stats',verifyToken, this.controller.getStats);
         // Retrieve a single Contract with id
@@ -27,4 +26,4 @@ class ContractRoutes {
     }
 }
 
-export default new ContractRoutes().router;
+export default ContractRoutes;

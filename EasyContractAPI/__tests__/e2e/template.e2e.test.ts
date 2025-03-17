@@ -1,6 +1,6 @@
 import request from 'supertest';
 import App from '../../index';
-import { Template } from '../../models/Template';
+import { Template } from '../../entities/Template';
 import { createTables, destroyTables } from '../../config/init';
 import express, { Express } from 'express';
 import Routes from '../..';

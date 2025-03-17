@@ -1,6 +1,6 @@
 import request from 'supertest';
 import App from '../../index';
-import User from '../../models/User';
+import User from '../../models/user/CreateRequest';
 import { createTables, destroyTables } from '../../config/init';
 import express, { Express } from 'express';
 import Routes from '../..';

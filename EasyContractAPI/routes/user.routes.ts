@@ -4,13 +4,12 @@ import verifyToken from "../helpers/token";
 
 class UserRoutes {
   router = Router();
-  controller = new UserController();
 
-  constructor() {
+  constructor(private controller: UserController) {
     this.intializeRoutes();
   }
 
-  intializeRoutes() {
+  intializeRoutes = () => {
     // Create a new User
     this.router.post("/",verifyToken, this.controller.create);
     // Retrieve a single User with id
@@ -22,4 +21,4 @@ class UserRoutes {
   }
 }
 
-export default new UserRoutes().router;
+export default UserRoutes;
