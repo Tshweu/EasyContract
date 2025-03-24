@@ -1,0 +1,29 @@
+<div class="container">
+    <mat-tab-group>
+        <mat-tab label="Title">
+            <div class="container">
+                <form [formGroup]="contractForm">
+                    <mat-form-field>
+                        <mat-label>Title</mat-label>
+                        <input
+                          matInput
+                          name="title"
+                          formControlName="title"
+                          required
+                        />
+                      </mat-form-field>
+                </form>
+            </div>
+        </mat-tab>
+        <mat-tab label="Recipient">
+            <div class="container">
+                <app-recipient-form
+                [(recipientForm)]="recipientForm"
+            ></app-recipient-form>
+            </div>
+        </mat-tab>
+        <mat-tab label="Contract" >
+            <div class="terms" style="height: 80vh;" [innerHTML]="terms"></div>
+        </mat-tab>
+    </mat-tab-group>
+</div>
