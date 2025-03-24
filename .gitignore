@@ -2,3 +2,8 @@
 /EasyContractAPI
 /EasyContractUI/.vscode
 /EasyContractUI/cypress/screenshots
+/EasyContractAPI/node_modules
+/EasyContractUI/.angular
+/EasyContractUI/node_modules
+EasyContractAPI/.env
+
