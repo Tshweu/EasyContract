@@ -25,6 +25,10 @@ export class SubmitContractComponent {
         this.contractId = this.route.snapshot.params['id'];
       }
 
+  ngOnInit():void{
+    this.getContract();
+  }
+
   getContract(){
     this.contractService.getContract(this.contractId).subscribe({
       next:(res)=>{

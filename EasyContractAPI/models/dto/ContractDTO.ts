@@ -4,5 +4,6 @@ export interface contractDTO {
     title: string;
     templateId: number;
     userId: number;
-    recipient: ContractRecipient
+    companyId: number;
+    recipient: ContractRecipient;
 }
