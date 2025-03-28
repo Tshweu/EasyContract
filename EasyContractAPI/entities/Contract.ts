@@ -10,5 +10,6 @@ export interface Contract {
     completed: boolean;
     otp?: number | null;
     userId: number;
-    recipient: ContractRecipient
+    recipient: ContractRecipient;
+    companyId: number;
 }

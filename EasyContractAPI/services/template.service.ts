@@ -135,6 +135,7 @@ export class TemplateService {
             ]);
             return result.affectedRows;
         } catch (error: any) {
+            console.log(error.message);
             throw new Error(error.message);
         }
     }

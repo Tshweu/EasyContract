@@ -1,6 +1,5 @@
 import express, { Application, Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import routes from './routes';
 
 dotenv.config();
 
@@ -11,11 +10,10 @@ import { AuthService } from './services/auth.service';
 import AuthController from './controllers/auth.controller';
 import { TemplateService } from './services/template.service';
 import TemplateController from './controllers/template.controller';
-import ContractRecipientController from './controllers/contract-recipient.controller';
-import con from './config/db';
 import { ContractRecipientService } from './services/contract-recipient.service';
-import ContractController from './controllers/contract.controller';
+import ContractRecipientController from './controllers/contract-recipient.controller';
 import { ContractService } from './services/contract.service';
+import ContractController from './controllers/contract.controller';
 
 export default class App {
     port = process.env.PORT || 3000;
@@ -34,7 +32,7 @@ export default class App {
             userController: new UserController(services.userService),
             authController: new AuthController(services.authService),
             contractRecipientController: new ContractRecipientController(services.contractRecipientService),
-            contractController: new ContractController(services.contractService),
+            contractController: new ContractController(services.contractService,services.templateService),
         }
         new Routes(app,controllers);
         this.app = app;

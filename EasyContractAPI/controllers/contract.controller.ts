@@ -14,7 +14,8 @@ import jwt from 'jsonwebtoken';
 
 export default class ContractController {
 
-    constructor(private contractService: ContractService){}
+    constructor(private contractService: ContractService,private templateService: TemplateService){
+    }
 
     get = async(req: Request, res: Response) => {
         try {
@@ -40,7 +41,7 @@ export default class ContractController {
         }
     }
 
-    async getById(req: Request, res: Response) {
+    getById = async (req: Request, res: Response) => {
         try {
             const contractId: number = parseInt(req.params.id);
             const contractRecipientService = new ContractRecipientService(db);
@@ -61,15 +62,14 @@ export default class ContractController {
         }
     }
 
-    async create(req: Request, res: Response) {
+    create = async (req: Request, res: Response) => {
         try {
             const date = DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss');
             //only replace place holders when returning data not in db
             const contractDTO: contractDTO = req.body;
 
-            const templateService = new TemplateService(db);
             const template: Template | null =
-                await templateService.findTemplateById(contractDTO.templateId);
+                await this.templateService.findTemplateById(contractDTO.templateId);
             console.log(contractDTO);
             if (!template) {
                 res.status(400).send('Template does not exist');
@@ -84,6 +84,7 @@ export default class ContractController {
                 status: 'new',
                 completed: false,
                 recipient: contractDTO.recipient,
+                companyId: contractDTO.companyId
             };
             const result = await this.contractService.createContract(
                 contract,
@@ -112,7 +113,7 @@ export default class ContractController {
         }
     }
 
-    async update(req: Request, res: Response) {
+    update = async (req: Request, res: Response) => {
         try {
             const body = req.body;
 
@@ -127,7 +128,7 @@ export default class ContractController {
         }
     }
 
-    async validate(req: Request, res: Response) {
+    validate = async (req: Request, res: Response) => {
         try {
             const body = req.body;
             const date = DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss');

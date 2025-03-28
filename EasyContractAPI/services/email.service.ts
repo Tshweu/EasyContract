@@ -17,7 +17,7 @@ export class EmailService {
 
             const msg = {
                 to: email, 
-                from:'no-reply@vintagesoftware.co.za',
+                from:'t.t.sephiri@gmail.com',
                 subject: subject,
                 text: message,
                 html: `<a href="${url}" target="_blank"><button>Open Contract</button</a>`,

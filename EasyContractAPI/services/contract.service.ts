@@ -123,8 +123,9 @@ export class ContractService {
                     terms,
                     status,
                     date,
-                    userId)
-                VALUES (?,?,?,?,?)
+                    userId,
+                    companyId)
+                VALUES (?,?,?,?,?,?)
             `;
 
             const [contractResult] = await con.query<ResultSetHeader>(sql, [
@@ -133,6 +134,7 @@ export class ContractService {
                 contract.status,
                 contract.date,
                 contract.userId,
+                contract.companyId,
             ]);
 
             sql = `
@@ -296,6 +298,7 @@ export class ContractService {
             status: result.status,
             otp: result.otp,
             userId: result.userId,
+            companyId: result.companyId,
             recipient: {
                 name: result.name,
                 surname: result.surname,
@@ -316,6 +319,7 @@ export class ContractService {
                 completed: Boolean(result[i].completed),
                 status: result[i].status,
                 userId: result[i].userId,
+                companyId: result[i].companyId,
                 recipient: {
                     name: result[i].name,
                     surname: result[i].surname,

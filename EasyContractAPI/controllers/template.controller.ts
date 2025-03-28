@@ -52,7 +52,10 @@ export default class TemplateController {
     create = async (req: Request, res: Response) => {
         try {
             const date = DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss');
+            req.body.date = date;
+            console.log(req.body);
             const template: CreateRequest = req.body;
+
 
             //check if template with title exists
             const found = await this.templateService.doesTemplateTitleExist(

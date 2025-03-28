@@ -1,0 +1,21 @@
+<form class="form-grid" [formGroup]="otpForm">
+    <mat-form-field>
+      <mat-label>ID Number</mat-label>
+      <input
+        matInput
+        name="idNumber"
+        formControlName="idNumber"
+        required
+      />
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>OTP</mat-label>
+        <input
+          matInput
+          name="otp"
+          formControlName="otp"
+          required
+        />
+      </mat-form-field>
+  </form>
+  

@@ -1,0 +1,16 @@
+<div class="container">
+    <mat-card style="justify-content: center; align-items: center">
+        @if(loading){
+        <mat-spinner></mat-spinner>
+        }@else{
+        <app-contract-otp-form [(otpForm)]="otpForm"></app-contract-otp-form>
+        <button
+            id="submit-otp"
+            mat-raised-button
+            (click)="submit()"
+        >
+            Verify
+        </button>
+        }
+    </mat-card>
+</div>

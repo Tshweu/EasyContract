@@ -1,7 +1,6 @@
 import { Router } from "express";
 import TemplateController from "../controllers/template.controller";
 import verifyToken from "../helpers/token";
-import Template2Controller from "../controllers/template2.controller";
 
 class TemplateRoutes {
   router = Router();

@@ -1,0 +1,31 @@
+<div class="container">
+  <mat-card style="justify-content: center;align-items: center;">
+    @if(loading){
+      <mat-spinner></mat-spinner>
+    }@else{
+    <form action="" [formGroup]="login_form">
+      <mat-form-field floatLabel="always">
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="" formControlName="email" required />
+        @if (login_form.get("email")?.errors) {
+        <mat-error>email is required</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field floatLabel="always">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          placeholder=""
+          type="password"
+          formControlName="password"
+          required
+        />
+        @if (login_form.get("password")?.errors) {
+        <mat-error>password required</mat-error>
+        }
+      </mat-form-field>
+      <button mat-raised-button (click)="login()">Login</button>
+    </form>
+  }
+  </mat-card>
+</div>
