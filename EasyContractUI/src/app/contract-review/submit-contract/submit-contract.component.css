@@ -1,5 +1,5 @@
 .container{
-    /* padding: 20px; */
+    padding: 20px;
 }
 
 .terms{
@@ -9,3 +9,13 @@
 .header{
     height: 10vh;
 }
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.blue-primary-toolbar {
+    background-color:#93C5FD; /* Material Blue 500 */
+    color: white; /* Ensures text is readable */
+}
+  

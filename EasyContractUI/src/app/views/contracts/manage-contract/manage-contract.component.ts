@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 import { ContractService } from '../../../../services/contract.service';
 import Contract from '../../../../models/Contract';
 import { NumberCardComponent } from '../../../components/cards/number-card/number-card.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-manage-contract',
@@ -35,7 +36,6 @@ export class ManageContractComponent {
         'title',
         'date',
         'recipient',
-        'completed',
         'status',
         'action',
     ];
@@ -51,25 +51,25 @@ export class ManageContractComponent {
     ngOnInit(): void {
         this.contractService.getContracts().subscribe({
             next: (res: any) => {
-              this.dataSource = new MatTableDataSource(res);
-              this.dataSource.paginator = this.paginator;
-              this.dataSource.sort = this.sort;
-              console.log(res);
+                this.dataSource = new MatTableDataSource(res);
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
+                console.log(res);
             },
             error: (err: Error) => {
-              //ToDo: Err Message
-              console.error(err);
+                //ToDo: Err Message
+                console.error(err);
             },
         });
         this.contractService.getStats().subscribe({
             next: (res: any) => {
                 for (const [key, value] of Object.entries(res)) {
-                   this.stats.push({title: key, total: value as number});
+                    this.stats.push({ title: key, total: value as number });
                 }
             },
             error: (err: Error) => {
-              //ToDo: Err Message
-              console.error(err);
+                //ToDo: Err Message
+                console.error(err);
             },
         });
     }
@@ -86,5 +86,11 @@ export class ManageContractComponent {
         if (this.dataSource.paginator) {
             this.dataSource.paginator.firstPage();
         }
+    }
+
+    private _snackBar = inject(MatSnackBar);
+
+    openSnackBar(message: string, action: string) {
+        this._snackBar.open(message, action, { duration: 3000 });
     }
 }

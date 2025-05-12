@@ -1,7 +1,9 @@
 <div class="container">
     <mat-tab-group>
-        <mat-tab label="Title">
-            <div class="container">
+        <mat-tab label="Contract: {{contractForm.value.title}}" >
+            <div class="terms" style="height: 80vh;" [innerHTML]="terms"></div>
+        </mat-tab>
+        <mat-tab label="Details">
                 <form [formGroup]="contractForm">
                     <mat-form-field>
                         <mat-label>Title</mat-label>
@@ -11,19 +13,39 @@
                           formControlName="title"
                           required
                         />
-                      </mat-form-field>
+                        <button matSuffix mat-button id="submit-contract" (click)="updateTitle()">
+                            Update Title
+                        </button>
+                    </mat-form-field>
                 </form>
-            </div>
-        </mat-tab>
-        <mat-tab label="Recipient">
-            <div class="container">
+            <mat-card class="container">
+                <mat-card-header>
+                    <mat-card-title>Signatory</mat-card-title>
+                </mat-card-header>
+                <hr>
                 <app-recipient-form
-                [(recipientForm)]="recipientForm"
-            ></app-recipient-form>
-            </div>
+                    [(recipientForm)]="recipientForm"
+                ></app-recipient-form>
+                <button mat-raised-button id="submit-contract" (click)="updateRecipient()">
+                    Update Recipient
+                </button>
+                <p>If recipient information is updated the contract will need to be signed again</p>
+            </mat-card>
+            <mat-card class="container">
+                <mat-card-header>
+                    <mat-card-title>Audit Trail</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    @for(audit of auditTrail;track audit.id) {
+                        <hr>
+                        <div class="audit-trail-item">
+                            <p>date: {{ audit.date }}</p>
+                            <p>action: {{ audit.action }}</p>
+                        </div>
+                    }
+                </mat-card-content>
+            </mat-card>
         </mat-tab>
-        <mat-tab label="Contract" >
-            <div class="terms" style="height: 80vh;" [innerHTML]="terms"></div>
-        </mat-tab>
+        
     </mat-tab-group>
 </div>

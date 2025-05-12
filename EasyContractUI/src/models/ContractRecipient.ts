@@ -1,7 +1,6 @@
 export default interface ContractRecipient{
     id?: number,
-    name: string,
-    surname: string,
+    fullName: string,
     email: string,
     idNumber: string
 }

@@ -1,1 +1,52 @@
-<p>user-profile works!</p>
+<div class="container">
+    <mat-card style="justify-content: center;align-items: center;">
+        <h1>User Profile</h1>
+        @if(loading){
+        <mat-spinner></mat-spinner>
+        }@else{
+        <form action="" [formGroup]="user_form">
+            <mat-form-field floatLabel="always">
+                <mat-label>Name</mat-label>
+                <input matInput placeholder="" formControlName="name" required />
+                @if (user_form.get("name")?.errors) {
+                <mat-error>name is required</mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field floatLabel="always">
+                <mat-label>Surname</mat-label>
+                <input matInput placeholder="" formControlName="surname" required />
+                @if (user_form.get("surname")?.errors) {
+                <mat-error>surname is required</mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field floatLabel="always">
+                <mat-label>Email</mat-label>
+                <input matInput placeholder="" formControlName="email" required />
+                @if (user_form.get("email")?.errors) {
+                <mat-error>email is required</mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field floatLabel="always">
+                <mat-label>Password</mat-label>
+                <input matInput placeholder="" type="password" formControlName="password" required />
+                @if (user_form.get("password")?.errors) {
+                <mat-error>password required</mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field floatLabel="always">
+                <mat-label>Password</mat-label>
+                <input matInput placeholder="" type="password_verify" formControlName="password_verify" required />
+                @if (user_form.get("password_verify")?.errors) {
+                <mat-error>password required</mat-error>
+                }
+                @if(!match()){
+                    <mat-error>passwords do not match</mat-error>
+                }
+            </mat-form-field>
+            <button mat-raised-button (click)="register()">Register</button>
+            <a href="/login">login</a>
+
+        </form>
+        }
+    </mat-card>
+</div>

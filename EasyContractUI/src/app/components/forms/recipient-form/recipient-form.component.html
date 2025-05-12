@@ -1,19 +1,10 @@
 <form class="form-grid" [formGroup]="recipientForm">
     <mat-form-field>
-      <mat-label>Name</mat-label>
+      <mat-label>Full Name</mat-label>
       <input
         matInput
-        name="name"
-        formControlName="name"
-        required
-      />
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Surname</mat-label>
-      <input
-        matInput
-        name="surname"
-        formControlName="surname"
+        name="fullName"
+        formControlName="fullName"
         required
       />
     </mat-form-field>
@@ -32,6 +23,7 @@
         matInput
         name="idNumber"
         formControlName="idNumber"
+        maxlength="13"
         required
       />
     </mat-form-field>

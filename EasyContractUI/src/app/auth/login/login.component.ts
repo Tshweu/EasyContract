@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Form, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { UserService } from '../../../services/user.service';
 import { Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +26,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class LoginComponent {
   login_form : FormGroup;
   loading : boolean = false;
+  private _snackBar = inject(MatSnackBar);
+  
   constructor(private fb: FormBuilder,private user_service: UserService, private router: Router){
     this.login_form = this.fb.group({
       email: ['john@cena.com',[Validators.required, Validators.email]],
@@ -40,11 +43,17 @@ export class LoginComponent {
           this.loading = false;
           sessionStorage.setItem('token', res.token);
           this.router.navigate(['views/contract/manage']);
+          this.openSnackBar('Login successful', 'Close');
         },
         error: (err: any) => {
           this.loading = false;
+          this.openSnackBar('Login failed:'+ err.error.message, 'Close');
         },
       });
     }
+  }
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action,{duration: 3000});
   }
 }

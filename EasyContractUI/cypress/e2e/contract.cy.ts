@@ -25,8 +25,7 @@ describe('My First Test', () => {
 
         cy.get('input[formControlName="title"]').type('Single Unit John Maleki 2024 Agreement');
         cy.get('mat-select[formControlName="templateId"]').click().get('mat-option').first().click();
-        cy.get('input[formControlName="name"]').type('Thabang John');
-        cy.get('input[formControlName="surname"]').type('Cena');
+        cy.get('input[formControlName="fullName"]').type('Thabang John');
         cy.get('input[formControlName="email"]').type('john@mymy.com');
         cy.get('input[formControlName="idNumber"]').type('036387286212');
     

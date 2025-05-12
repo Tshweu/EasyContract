@@ -2,7 +2,7 @@
     <button mat-button [matMenuTriggerFor]="contracts_menu">Contracts</button>
     <button mat-button [matMenuTriggerFor]="template_menu">Templates</button>
     <span class="spacer"></span>
-    <button mat-button routerLink="user/manage">Profile</button>
+    <button mat-button [matMenuTriggerFor]="profile_menu">Profile</button>
 </mat-toolbar>
 
 <mat-menu #contracts_menu="matMenu">
@@ -13,6 +13,11 @@
 <mat-menu #template_menu="matMenu">
     <button mat-menu-item routerLink="template/manage">Manage</button>
     <button mat-menu-item routerLink="template/create">Create Template</button>
+</mat-menu>
+
+<mat-menu #profile_menu="matMenu">
+    <button mat-menu-item routerLink="user/manage">Manage</button>
+    <button mat-menu-item (click)="logout()">Logout</button>
 </mat-menu>
 
 <router-outlet></router-outlet>

@@ -15,3 +15,5 @@
 
 // When a command from ./commands is ready to use, import with `import './commands'` syntax
 import './commands';
+import { slowCypressDown } from 'cypress-slow-down'
+slowCypressDown(1000); // 1 second delay between commands and 1 second delay between requests

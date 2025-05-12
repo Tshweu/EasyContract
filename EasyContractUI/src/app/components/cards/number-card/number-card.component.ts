@@ -11,4 +11,8 @@ import { CardDetail } from '../../../../models/CardDetail';
 })
 export class NumberCardComponent {
   @Input() details: CardDetail = { title: '', total: 0 };
+
+  capitalize(val: string): string {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+  }
 }

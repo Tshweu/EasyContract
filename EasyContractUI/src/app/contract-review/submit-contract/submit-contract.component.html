@@ -1,14 +1,12 @@
+@if(loading){
+    <mat-spinner></mat-spinner>
+}@else{
+<mat-toolbar class="blue-primary-toolbar">
+    <h4>Review the contract before submission</h4>
+    <span class="spacer"></span>
+    <button mat-raised-button >Reject</button>
+</mat-toolbar>
 <div class="container">
-    <div class="header">
-        <button
-            id="submit-template"
-            style="margin-top: 20px"
-            mat-raised-button
-            (click)="submit()"
-        >
-            Submit
-        </button>
-    </div>
     <div class="terms" [innerHTML]="contract?.terms"></div>
     <div class="header">
         <button
@@ -21,3 +19,4 @@
         </button>
     </div>
 </div>
+}
