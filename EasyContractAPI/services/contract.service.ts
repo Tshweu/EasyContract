@@ -1,6 +1,6 @@
 import { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { Contract } from '../entities/Contract';
-import { ContractRecipient } from '../entities/ContractRecipient';
+import { Signatory } from '../entities/Signatory';
 import { ContractStats } from '../entities/ContractStats';
 
 export class ContractService {
@@ -42,15 +42,13 @@ export class ContractService {
             contract.id,
             title,
             date,
-            completed,
             status,
-            name,
-            surname,
+            fullName,
             email,
             idNumber
         FROM contract
-        LEFT JOIN contract_recipient 
-        ON contract_recipient.contractId = contract.id
+        LEFT JOIN signatory 
+        ON signatory.contractId = contract.id
         WHERE userId = ?;`;
         try {
             const [contract] = await this.db.query<RowDataPacket[]>(sql, [id]);
@@ -68,7 +66,6 @@ export class ContractService {
             title,
             terms,
             date,
-            completed,
             status,
             otp,
             userId
@@ -89,7 +86,6 @@ export class ContractService {
             SET 
                 title = ?,
                 terms = ?,
-                completed = ?,
                 status = ?
             WHERE 
                 id = ?;
@@ -97,7 +93,6 @@ export class ContractService {
             const [result] = await this.db.query<ResultSetHeader>(sql, [
                 contract.title,
                 contract.terms,
-                contract.completed,
                 contract.status,
                 id,
             ]);
@@ -109,14 +104,14 @@ export class ContractService {
 
     async createContract(
         contract: Contract,
-        contractRecipient: ContractRecipient,
+        signatory: Signatory,
     ): Promise<number> {
         const con = await this.db.getConnection();
         await con.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
         await con.beginTransaction();
         try {
             //Get template terms
-
+            console.log("passed 1");
             let sql = `
                 INSERT INTO contract(
                     title,
@@ -124,8 +119,9 @@ export class ContractService {
                     status,
                     date,
                     userId,
-                    companyId)
-                VALUES (?,?,?,?,?,?)
+                    companyId,
+                    otp)
+                VALUES (?,?,?,?,?,?,?)
             `;
 
             const [contractResult] = await con.query<ResultSetHeader>(sql, [
@@ -135,23 +131,25 @@ export class ContractService {
                 contract.date,
                 contract.userId,
                 contract.companyId,
+                contract.otp,
             ]);
+            console.log("passed 2");
 
             sql = `
-                INSERT INTO contract_recipient(
-                    name,
-                    surname,
+                INSERT INTO signatory(
+                    fullName,
                     email,
                     idNumber,
+                    phoneNumber,
                     contractId)
                 VALUES (?,?,?,?,?)
             `;
 
             const [crResult] = await con.query<ResultSetHeader>(sql, [
-                contractRecipient.name,
-                contractRecipient.surname,
-                contractRecipient.email,
-                contractRecipient.idNumber,
+                signatory.fullName,
+                signatory.email,
+                signatory.idNumber,
+                signatory.phoneNumber,
                 contractResult.insertId,
             ]);
 
@@ -170,8 +168,9 @@ export class ContractService {
             ]);
 
             await con.commit();
-            return contractResult.affectedRows;
+            return contractResult.insertId;
         } catch (error: any) {
+            console.log(error.message);
             await con.rollback();
             console.log('throw');
             throw new Error('Error Creating Contract');
@@ -185,16 +184,10 @@ export class ContractService {
         const con = await this.db.getConnection();
         await con.beginTransaction();
         try {
-            let sql = `
-            UPDATE contract(
-            SET    
-                status = ?,
-            WHERE
-                id = ?
-            `;
+            let sql = `UPDATE contract SET status = ? WHERE id = ?;`;
             const [result] = await this.db.query<ResultSetHeader>(sql, [
-                id,
                 status,
+                id
             ]);
             
             sql = `
@@ -228,7 +221,9 @@ export class ContractService {
         otp: number,
         idNumber: string,
         date: string,
-    ): Promise<boolean> {
+    ): Promise<any> {
+        console.log('validate otp called');
+        console.log(id, otp, idNumber, date);
         const con = await this.db.getConnection();
         await con.beginTransaction();
         try {
@@ -238,15 +233,14 @@ export class ContractService {
                 c.title,
                 c.terms,
                 c.date,
-                c.completed,
                 c.status,
                 c.otp,
                 c.userId,
                 cr.idNumber,
-                cr.name,
-                cr.surname
+                cr.id as signatoryId,
+                cr.fullName
             FROM contract AS c
-            LEFT JOIN contract_recipient AS cr
+            LEFT JOIN signatory AS cr
             ON cr.contractId = c.id
             WHERE c.id = ? AND c.otp = ? AND cr.idNumber = ?;`;
             const [foundContract] = await con.query<RowDataPacket[]>(sql, [
@@ -268,16 +262,16 @@ export class ContractService {
                     date,
                     id,
                 ]);
-                return false;
+                throw new Error('Invalid OTP or ID Number');
             }else{
                 const [caResult] = await con.query<ResultSetHeader>(sql, [
-                    `Contract recipient ${foundContract[0].name}  ${foundContract[0].surname} successfully attempted to verify details and enter otp`,
+                    `Contract recipient ${foundContract[0].fullNamw} successfully attempted to verify details and enter otp`,
                     date,
                     id,
                 ]);
             }
             await con.commit();
-            return true;
+            return { contract: foundContract[0].id, name: foundContract[0].fullName, signatoryId: foundContract[0].signatoryId };
         } catch (error: any) {
             await con.rollback();
             console.log(error);
@@ -294,17 +288,18 @@ export class ContractService {
             title: result.title,
             terms: result.terms,
             date: result.date,
-            completed: Boolean(result.completed),
             status: result.status,
             otp: result.otp,
             userId: result.userId,
             companyId: result.companyId,
             recipient: {
-                name: result.name,
-                surname: result.surname,
+                fullName: result.fullName,
                 idNumber: result.idNumber,
                 email: result.email,
+                phoneNumber: result.phoneNumber,
             },
+            dateSigned: result.dateSigned,
+            dueDate: result.dueDate,
         };
     }
 
@@ -316,16 +311,17 @@ export class ContractService {
                 title: result[i].title,
                 terms: result[i].terms,
                 date: result[i].date,
-                completed: Boolean(result[i].completed),
                 status: result[i].status,
                 userId: result[i].userId,
                 companyId: result[i].companyId,
                 recipient: {
-                    name: result[i].name,
-                    surname: result[i].surname,
+                    fullName: result[i].fullName,
                     idNumber: result[i].idNumber,
                     email: result[i].email,
+                    phoneNumber: result[i].phoneNumber,
                 },
+                dateSigned: result[i].dateSigned,
+                dueDate: result[i].dueDate,
             });
         }
         return contractList;

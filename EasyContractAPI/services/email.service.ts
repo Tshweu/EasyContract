@@ -1,33 +1,41 @@
 import { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import pool from '../config/db';
-import sgMail from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 export class EmailService {
 
     constructor() {
     }
 
-    async sendMail(email: string, subject: string, message: string, url: string): Promise<boolean> {
-        if (!process.env.SENDGRID_API_KEY) {
+    async sendMail(recipient: string, subject: string, message: string): Promise<void> {
+        if (!process.env.GM_APP_PW) {
             throw new Error('Email api failed to connect');
         }
-       
-        try{
-            sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-            const msg = {
-                to: email, 
-                from:'t.t.sephiri@gmail.com',
-                subject: subject,
-                text: message,
-                html: `<a href="${url}" target="_blank"><button>Open Contract</button</a>`,
-            };
-
-            const mail = await sgMail.send(msg)
-            return true;
-        }catch(err){
-            console.error(err);
-            return false;
-        }
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'biztalk2024@gmail.com', 
+                pass: process.env.GM_APP_PW
+            }
+        });
+    
+        // Define the email options
+        const mailOptions = {
+            from: 'sender mail', 
+            to: recipient, 
+            subject: subject, 
+            html: message,
+        };
+    
+        // Send the email
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error("Error occurred:", error);
+                throw new Error('Email api failed to connect');
+            }
+        });
     }
 }

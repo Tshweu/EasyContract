@@ -11,7 +11,7 @@ class UserRoutes {
 
   intializeRoutes = () => {
     // Create a new User
-    this.router.post("/",verifyToken, this.controller.create);
+    this.router.post("/", this.controller.create);
     // Retrieve a single User with id
     this.router.get("/:id",verifyToken, this.controller.getById);
     // Update a User with id

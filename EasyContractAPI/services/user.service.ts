@@ -93,10 +93,10 @@ export class UserService {
                 user.surname,
                 user.email,
                 user.password,
-                user.roleId,
-                user.companyId
+                1,
+                1
             ]);
-            return result.affectedRows;
+            return result.insertId;
         } catch (error: any) {
             console.log(error);
             throw new Error(error.message);

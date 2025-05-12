@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import { LoginDTO } from '../models/dto/LoginDTO';
 import jwt from 'jsonwebtoken';
 import { AuthService } from '../services/auth.service';
+import { EmailService } from '../services/email.service';
 export default class AuthController {
     
     constructor(private authService: AuthService) {

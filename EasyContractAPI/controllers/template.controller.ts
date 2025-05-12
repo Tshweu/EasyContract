@@ -80,6 +80,7 @@ export default class TemplateController {
                 return;
             }
         } catch (error) {
+            console.log(error);
             res.status(500).send('Error Creating template');
         }
     }

@@ -26,7 +26,7 @@ export class ContractAuditService {
         }
     }
 
-    async findContractAuditById(id: number): Promise<ContractAudit> {
+    async findContractAuditById(id: number): Promise<ContractAudit[]> {
         const sql = `
         SELECT 
             id,
@@ -34,10 +34,14 @@ export class ContractAuditService {
             date,
             contractId
         FROM contract_audit
-        WHERE id = ?;`;
+        WHERE contractId = ?;`;
         try {
             const [result] = await this.db.query<RowDataPacket[]>(sql, [id]);
-            return this.toContractAudit(result[0]);
+            let audits: ContractAudit[] = [];
+            result.forEach(element => {
+                audits.push(this.toContractAudit(element));
+            }); 
+            return audits;
         } catch (error) {
             throw Error('Failed to find contractAudit');
         }

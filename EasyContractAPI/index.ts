@@ -10,10 +10,11 @@ import { AuthService } from './services/auth.service';
 import AuthController from './controllers/auth.controller';
 import { TemplateService } from './services/template.service';
 import TemplateController from './controllers/template.controller';
-import { ContractRecipientService } from './services/contract-recipient.service';
-import ContractRecipientController from './controllers/contract-recipient.controller';
+import { SignatoryService } from './services/signatory.service';
+import SignatoryController from './controllers/signatory.controller';
 import { ContractService } from './services/contract.service';
 import ContractController from './controllers/contract.controller';
+import { ContractAuditService } from './services/contract-audit.service';
 
 export default class App {
     port = process.env.PORT || 3000;
@@ -24,15 +25,22 @@ export default class App {
             userService: new UserService(db),
             authService: new AuthService(db),
             templateService: new TemplateService(db),
-            contractRecipientService: new ContractRecipientService(db),
+            signatoryService: new SignatoryService(db),
             contractService: new ContractService(db),
+            auditService: new ContractAuditService(db),
         }
         const controllers = {
             templateController: new TemplateController(services.templateService),
             userController: new UserController(services.userService),
             authController: new AuthController(services.authService),
-            contractRecipientController: new ContractRecipientController(services.contractRecipientService),
-            contractController: new ContractController(services.contractService,services.templateService),
+            signatoryController: new SignatoryController(services.signatoryService),
+            contractController: new ContractController(
+                services.contractService,
+                services.templateService,
+                services.signatoryService,
+                services.userService,
+                services.auditService,
+                ),
         }
         new Routes(app,controllers);
         this.app = app;

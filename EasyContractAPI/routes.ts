@@ -1,6 +1,6 @@
 import express, { Application} from 'express';
 import userRoutes from './routes/user.routes';
-import contractRecipientRoutes from './routes/contract-recipient.routes';
+import signatoryRoutes from './routes/signatory.routes';
 import templateRoutes from './routes/template.routes';
 import contractRoutes from './routes/contract.routes';
 import authRoutes from './routes/auth.routes';
@@ -15,6 +15,6 @@ export default class Routes{
         app.use("/api/v1/user", new userRoutes(controllers.userController).router );
         app.use("/api/v1/template", new templateRoutes(controllers.templateController).router);
         app.use("/api/v1/contract", new contractRoutes(controllers.contractController).router);
-        app.use("/api/v1/recipient", new contractRecipientRoutes(controllers.contractRecipientController).router);
+        app.use("/api/v1/signatory", new signatoryRoutes(controllers.signatoryController).router);
     }
 }

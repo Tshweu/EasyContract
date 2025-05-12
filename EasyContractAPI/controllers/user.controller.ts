@@ -37,7 +37,7 @@ export default class UserController {
             }
             const result: number = await userService.createUser(user);
             if (result > 0) {
-                res.status(201).send('New user created');
+                res.status(201).send({});
                 return;
             } else {
                 res.status(401).send('error creating user');

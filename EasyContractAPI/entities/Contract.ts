@@ -1,4 +1,4 @@
-import { ContractRecipient } from './ContractRecipient';
+import { Signatory } from './Signatory';
 import { ContractAudit } from './ContractAudit';
 
 export interface Contract {
@@ -6,10 +6,12 @@ export interface Contract {
     title: string;
     terms: string;
     date: string;
+    dueDate: string;
+    dateSigned?: string | null;
     status: string;
-    completed: boolean;
     otp?: number | null;
     userId: number;
-    recipient: ContractRecipient;
+    recipient: Signatory;
     companyId: number;
+    auditTrail?: ContractAudit[];
 }
