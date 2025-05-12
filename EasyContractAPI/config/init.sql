@@ -61,8 +61,7 @@ CREATE TABLE
         terms LONGTEXT NOT NULL,
         userId INT NOT NULL,
         date DATETIME NOT NULL,
-        completed BOOLEAN DEFAULT false NOT NULL,
-        status VARCHAR(50),
+        status VARCHAR(50) NOT NULL,
         otp VARCHAR(6),
         companyId int NOT NULL,
         FOREIGN KEY (userId) REFERENCES user(id),
@@ -70,12 +69,12 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    test.contract_recipient (
+    test.signatory (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(50) NOT NULL,
-        surname VARCHAR(50) NOT NULL,
+        fullName VARCHAR(250) NOT NULL,
         email VARCHAR(50) NOT NULL,
         idNumber VARCHAR(13) NOT NULL,
+        phoneNumber VARCHAR(10) DEFAULT NULL,
         contractId INT NOT NULL,
         FOREIGN KEY (contractId) REFERENCES contract (id)
     );
@@ -192,32 +191,28 @@ VALUES
     );
 
 INSERT INTO
-    test.contract_recipient (name, surname, email, idNumber, contractId)
+    test.signatory (fullName, email, idNumber, contractId)
 VALUES
     (
-        "jason",
-        "jones",
+        "jason jones",
         "jason@gmail.com",
         "78356373",
         1
     ),
     (
-        "jason",
-        "jones",
+		"jason jones",
         "jason@gmail.com",
         "78356373",
         2
     ),
     (
-        "jason",
-        "jones",
+		"jason jones",
         "jason@gmail.com",
         "78356373",
         3
     ),
     (
-        "jason",
-        "jones",
+		"jason jones",
         "jason@gmail.com",
         "78356373",
         4

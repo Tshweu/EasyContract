@@ -57,7 +57,7 @@ async function createTables() {
 			FOREIGN KEY (userId) REFERENCES user(id),
 			FOREIGN KEY(companyId) REFERENCES company(id)
 		);
-		CREATE TABLE test.contract_recipient(
+		CREATE TABLE test.signatory(
 			id INT AUTO_INCREMENT PRIMARY KEY,
 			name VARCHAR(50) NOT NULL,
 			surname VARCHAR(50) NOT NULL,
@@ -148,7 +148,7 @@ async function createTables() {
 				<p>It really is awesome</p>
 				<p>{{idNumber}}</p>","new","2014-07-01 01:01:01",1);
 
-		INSERT INTO test.contract_recipient(
+		INSERT INTO test.signatory(
                     name,
                     surname,
                     email,
