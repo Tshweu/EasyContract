@@ -14,7 +14,6 @@ export class ContractAuditService {
         SELECT 
             id,
             name,
-            surname,
             email
         FROM contract_audit
         WHERE email = ?;`;

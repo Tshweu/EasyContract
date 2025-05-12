@@ -27,6 +27,8 @@ class ContractRoutes {
         this.router.get('/recipient/:id',verifyRecipientToken, this.controller.getById);
         // Recipient contract submission
         this.router.put('/sign/:id',verifyRecipientToken, this.controller.sign);
+        // Recipient contract rejection
+        this.router.put('/reject/:id',verifyRecipientToken, this.controller.sign);
     }
 }
 

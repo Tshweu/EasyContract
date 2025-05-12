@@ -10,15 +10,14 @@ import { SignatoryService } from '../services/signatory.service';
 import { Signatory } from '../entities/Signatory';
 import { EmailService } from '../services/email.service';
 import jwt from 'jsonwebtoken';
-import con from '../config/db';
 import { UserService } from '../services/user.service';
 import User from '../entities/User';
 import { ContractAuditService } from '../services/contract-audit.service';
 
 export default class ContractController {
 
-    constructor(private contractService: ContractService, 
-        private templateService: TemplateService, 
+    constructor(private contractService: ContractService,
+        private templateService: TemplateService,
         private signatoryService: SignatoryService,
         private userService: UserService,
         private auditService: ContractAuditService) {
@@ -27,7 +26,6 @@ export default class ContractController {
     get = async (req: Request, res: Response) => {
         try {
             const userId: number = parseInt(req.body.userId);
-            //pass user id into service
             const contract: Contract[] = await this.contractService.findAll(userId);
             res.send(contract);
         } catch (err) {
@@ -144,9 +142,11 @@ export default class ContractController {
 
     replacePlaceholders = async (contract: Contract, signatory: Signatory) => {
         let terms = contract.terms;
+        const date = DateTime.now().toFormat('yyyy-MM-dd');
         terms = terms.replace(/{{fullName}}/g, signatory.fullName);
         terms = terms.replace(/{{idNumber}}/g, signatory.idNumber);
         terms = terms.replace(/{{email}}/g, signatory.email);
+        terms = terms.replace(/{{date}}/g, date);
         contract.terms = terms;
     }
 
@@ -161,7 +161,7 @@ export default class ContractController {
                 body,
             );
         } catch (error) {
-            res.status(500).send('error updating contract');
+            res.status(500).send({ message: 'error updating contract' });
         }
     }
 
@@ -179,7 +179,7 @@ export default class ContractController {
             );
 
             if (!process.env.KEY) {
-                res.status(500).send('Internal Error');
+                res.status(500).send({ message: 'Internal Error' });
                 return;
             }
             //create different key for contracts
@@ -190,11 +190,11 @@ export default class ContractController {
                 res.status(200).send({ token: token });
                 return;
             }
-            res.status(403).send('Invalid Details');
+            res.status(403).send({ message: 'Invalid Details' });
             return;
         } catch (error) {
             console.log(error);
-            res.status(500).send('error validating contract');
+            res.status(500).send({ message: 'error validating contract' });
             return;
         }
     }
@@ -220,7 +220,7 @@ export default class ContractController {
                 );
 
             const user: User | null = await this.userService.findUserById(contract.userId);
-            
+
             contract.recipient = signatory;
 
             if (valid) {
@@ -230,24 +230,77 @@ export default class ContractController {
                 Congratulations! The contract has been signed successfully.
                 </p>`
                 const email = new EmailService();
-                await email.sendMail(signatory.email,"Contract Signed : "+contract.title , message);
+                await email.sendMail(signatory.email, "Contract Signed : " + contract.title, message);
 
                 message = `
                 <h1>Contract Approval Request: </h1>
                 <p>Dear user,
                 Congratulations! The contract ${contract.title} has been signed successfully.
                 </p>`
-                if(user){
-                    await email.sendMail(user.email,"Contract Signed: "+signatory.fullName , message);
+                if (user) {
+                    await email.sendMail(user.email, "Contract Signed: " + signatory.fullName, message);
                 }
                 res.status(200).send({});
                 return;
             }
-            res.status(403).send('Invalid Details');
+            res.status(403).send({ message: 'Invalid Details' });
             return;
         } catch (error) {
             console.log(error);
-            res.status(500).send('error signing contract');
+            res.status(500).send({ message: 'error signing contract' });
+            return;
+        }
+    }
+
+    reject = async (req: Request, res: Response) => {
+        try {
+            const contractId: number = parseInt(req.params.id);
+            const signatoryId: number = parseInt(req.body.signatoryId);
+            const date = DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss');
+            const valid = await this.contractService.updateContractStatus(
+                contractId,
+                "rejected",
+                date
+            );
+
+            const contract: Contract = await this.contractService.findContractById(
+                contractId,
+            );
+
+            const signatory: Signatory =
+                await this.signatoryService.findSignatoryByContractId(
+                    contractId,
+                );
+
+            const user: User | null = await this.userService.findUserById(contract.userId);
+
+            contract.recipient = signatory;
+
+            if (valid) {
+                let message = `
+                <h1>Contract Rejection Confirmation: </h1>
+                <p>Dear Signatory,
+                The contract has been rejected.
+                </p>`
+                const email = new EmailService();
+                await email.sendMail(signatory.email, "Contract Rejected : " + contract.title, message);
+
+                message = `
+                <h5>Contract Request: </h5>
+                <p>Dear user,
+                    We regrect to inform you the contract ${contract.title} has been rejected.
+                </p>`
+                if (user) {
+                    await email.sendMail(user.email, "Contract Rejected: " + signatory.fullName, message);
+                }
+                res.status(200).send({});
+                return;
+            }
+            res.status(403).send({ message: 'Invalid Details' });
+            return;
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ message: 'error signing contract' });
             return;
         }
     }

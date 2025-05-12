@@ -198,8 +198,19 @@ export class ContractService {
             VALUES (?,?,?)
             `;
             
+            let message = '';
+
+            switch(status){
+                case "signed":
+                    message =  `Contract status was updated to ${status}, Contract was signed`;
+                    break;
+                case "rejected":
+                    message =  `Contract status was updated to ${status}, Contract was rejected`;
+                    break;
+            }
+
             const [caResult] = await con.query<ResultSetHeader>(sql, [
-                `Contract status was updated to ${status}`,
+                message,
                 date,
                 id,
             ]);
@@ -222,7 +233,6 @@ export class ContractService {
         idNumber: string,
         date: string,
     ): Promise<any> {
-        console.log('validate otp called');
         console.log(id, otp, idNumber, date);
         const con = await this.db.getConnection();
         await con.beginTransaction();
@@ -265,7 +275,7 @@ export class ContractService {
                 throw new Error('Invalid OTP or ID Number');
             }else{
                 const [caResult] = await con.query<ResultSetHeader>(sql, [
-                    `Contract recipient ${foundContract[0].fullNamw} successfully attempted to verify details and enter otp`,
+                    `Contract recipient ${foundContract[0].fullName} successfully attempted to verify details and enter otp`,
                     date,
                     id,
                 ]);

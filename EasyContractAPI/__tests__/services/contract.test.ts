@@ -93,7 +93,7 @@ describe('contract service tests', () => {
     test('should fail to create contract', async () => {
         let contractService: ContractService = new ContractService(pool);
 
-        signatory.name = "Should Fail";
+        signatory.fullName = "Should Fail";
         contract.userId = 0;
         try {
             const affectedRows = await contractService.createContract(
