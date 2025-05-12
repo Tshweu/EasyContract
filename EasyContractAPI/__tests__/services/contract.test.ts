@@ -3,17 +3,14 @@ import pool from '../../config/db';
 import { Contract } from '../../entities/Contract';
 import { createTables, destroyTables } from '../../config/init';
 import { DateTime } from 'luxon';
-import { ContractRecipient } from '../../entities/ContractRecipient';
+import { Signatory } from '../../entities/Signatory';
 import { ContractStats } from '../../entities/ContractStats';
-
-
 
 describe('contract service tests', () => {
 
-    let contractRecipient: ContractRecipient = {
+    let signatory: Signatory = {
         id: 2,
-        name: 'test',
-        surname: 'test',
+        fullName: 'test test',
         email: 'test@gmail.com',
         idNumber: '876834987434',
         contractId: 2,
@@ -23,12 +20,13 @@ describe('contract service tests', () => {
         id: 2,
         title: 'The contract',
         terms: 'Hey how did you; sdlnsnan safjda; dsnna',
-        completed: false,
         date: DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss'),
+        dueDate: DateTime.now().toFormat('yyyy-MM-dd hh:mm:ss'),
         userId: 1,
         status: 'new',
         otp: null,
-        recipient: contractRecipient
+        recipient: signatory,
+        companyId: 1
     };
     
     beforeAll(() => {
@@ -47,7 +45,7 @@ describe('contract service tests', () => {
         let contractService: ContractService = new ContractService(pool);
         const affectedRows: number = await contractService.createContract(
             contract,
-            contractRecipient,
+            signatory,
         );
 
         expect(affectedRows).toBe(1);
@@ -95,12 +93,12 @@ describe('contract service tests', () => {
     test('should fail to create contract', async () => {
         let contractService: ContractService = new ContractService(pool);
 
-        contractRecipient.name = "Should Fail";
+        signatory.name = "Should Fail";
         contract.userId = 0;
         try {
             const affectedRows = await contractService.createContract(
                 contract,
-                contractRecipient,
+                signatory,
             );
             expect(affectedRows).toEqual(0);
         } catch (error) {

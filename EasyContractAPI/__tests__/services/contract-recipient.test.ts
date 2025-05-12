@@ -1,13 +1,12 @@
-import { ContractRecipientService } from '../../services/contract-recipient.service';
+import { SignatoryService } from '../../services/signatory.service';
 import pool from '../../config/db';
-import { ContractRecipient } from '../../entities/ContractRecipient';
+import { Signatory } from '../../entities/Signatory';
 import { createTables, destroyTables } from '../../config/init';
 
-describe('contractRecipient service tests', () => {
-    let contractRecipient: ContractRecipient = {
+describe('signatory service tests', () => {
+    let signatory: Signatory = {
         id: 1,
-        name: 'jason',
-        surname: 'jones',
+        fullName: 'john jones',
         email: 'jason@gmail.com',
         idNumber: '78356373',
         contractId: 1
@@ -25,18 +24,18 @@ describe('contractRecipient service tests', () => {
         return pool.end();
     });
 
-    test('should get contractRecipient by id', async () => {
-        let contractRecipientService: ContractRecipientService = new ContractRecipientService(pool);
+    test('should get signatory by id', async () => {
+        let signatoryService: SignatoryService = new SignatoryService(pool);
 
-        const foundContractRecipient: ContractRecipient = await contractRecipientService.findContractRecipientById(1);
-        expect(foundContractRecipient).toEqual(contractRecipient);
+        const foundSignatory: Signatory = await signatoryService.findSignatoryById(1);
+        expect(foundSignatory).toEqual(signatory);
     });
 
-    test('should update new contractRecipient', async () => {
-        let contractRecipientService: ContractRecipientService = new ContractRecipientService(pool);
+    test('should update new signatory', async () => {
+        let signatoryService: SignatoryService = new SignatoryService(pool);
 
-        contractRecipient.surname = "new surname";
-        const affectedRows: number = await contractRecipientService.updateContractRecipientById(1,contractRecipient);
+        signatory.fullName = "new surname";
+        const affectedRows: number = await signatoryService.updateSignatoryById(1,signatory);
         expect(affectedRows).toBe(1);
     });
 
