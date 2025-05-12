@@ -16,7 +16,7 @@ export default class AuthController {
             let login: LoginDTO = req.body;
             const user: User | null = await this.authService.findUserPassword(login.email);
             if (!user || !user.password) {
-                res.status(401).send('User not found');
+                res.status(401).send({message:'invalid user details'});
                 return;
             }
 
@@ -26,7 +26,7 @@ export default class AuthController {
             );
 
             if (!process.env.KEY) {
-                res.status(500).send('Internal Error Logging In');
+                res.status(500).send({message:'Internal Error Logging In'});
                 return;
             }
             if (valid && process.env.KEY) {
@@ -41,10 +41,10 @@ export default class AuthController {
                 return;
             }
 
-            res.status(401).send();
+            res.status(401).send({message:'invalid user details, please try again'});
             return;
         } catch (err) {
-            res.status(500).send('Internal Error');
+            res.status(500).send({message:'Internal Error'});
             return;
         }
     }
