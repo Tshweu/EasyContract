@@ -27,11 +27,19 @@ export class ContractService {
     return this._http.get<Contract>(`${environment.api}contract/${id}`);
   }
 
+  getRecipientContract(id:number){
+    return this._http.get<Contract>(`${environment.api}contract/recipient/${id}`);
+  }
+
   updateContract(contract: Contract){
     return this._http.put<Contract>(`${environment.api}contract/${contract.id}`,contract);
   }
 
+  signContract(contract: Contract){
+    return this._http.put<Contract>(`${environment.api}contract/sign/${contract.id}`,contract);
+  }
+
   verifyContractUser(user: VerifyContractUser){
-    return this._http.post<Contract>(`${environment.api}contract/verify/${user.contractId}`,user);
+    return this._http.post<Contract>(`${environment.api}contract/validate/${user.contractId}`,user);
   }
 }

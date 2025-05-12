@@ -15,7 +15,6 @@ export class TemplateService {
     }
 
     createTemplate(template: Template) {
-      console.log(template);
         return this._http.post<Template>(
             `${environment.api}template`,
             template,

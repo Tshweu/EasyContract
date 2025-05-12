@@ -47,19 +47,9 @@
                     Recipient
                 </th>
                 <td mat-cell *matCellDef="let row">
-                    {{ row.recipient.name }} <br />
-                    {{ row.recipient.surname }} <br />
+                    {{ row.recipient.fullName }} <br />
                     {{ row.recipient.idNumber }} <br />
                     {{ row.recipient.email }}
-                </td>
-            </ng-container>
-
-            <ng-container matColumnDef="completed">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                    Status
-                </th>
-                <td mat-cell *matCellDef="let row">
-                    <mat-chip>{{ row.completed }}</mat-chip>
                 </td>
             </ng-container>
 

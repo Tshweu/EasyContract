@@ -6,7 +6,14 @@ export default interface Contract{
     templateId?: number,
     terms: string,
     date: string,
-    completed: boolean,
     status: string,
-    recipient: ContractRecipient
+    recipient: ContractRecipient,
+    auditTrail: [],
+}
+
+export interface auditTrail{
+    id: number,
+    action: string,
+    date: string,
+    contractId: number,
 }

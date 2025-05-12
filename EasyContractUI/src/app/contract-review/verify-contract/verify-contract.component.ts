@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ContractService } from '../../../services/contract.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ContractOtpFormComponent } from '../../components/forms/contract-otp-form/contract-otp-form.component'
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-verify-contract',
@@ -21,6 +22,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class VerifyContractComponent {
     otpForm: FormGroup;
     loading: boolean = false;
+    private _snackBar = inject(MatSnackBar);
 
     constructor(
         private formBuilder: FormBuilder,
@@ -43,16 +45,24 @@ export class VerifyContractComponent {
     }
 
     submit(): void {
+        this.loading = true;
         if (this.otpForm.valid) {
             this.contractService.verifyContractUser(this.otpForm.value).subscribe({
-                next: (res)=>{
-                    //show toast
+                next: (res:any)=>{
+                    this.loading = false;
+                    sessionStorage.setItem('token',res.token);
                     this.router.navigateByUrl(`/contract/review/submit/${this.otpForm.value.contractId}`);
+
                 },
                 error: (err)=>{
+                    this.loading = false;
                     console.log(err);
                 }
             })
         }
+    }
+
+    openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action,{duration: 3000});
     }
 }

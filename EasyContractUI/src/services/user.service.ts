@@ -13,6 +13,10 @@ export class UserService {
     return this._http.post<any>(`${environment.api}auth/login`,data);
   }
 
+  signup(data:any){
+    return this._http.post<any>(`${environment.api}user`,data);
+  }
+
   logoutUser() {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('email');

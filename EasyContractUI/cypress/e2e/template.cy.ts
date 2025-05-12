@@ -17,18 +17,22 @@ describe('My First Test', () => {
 
     it('Creates new template', () => {
         cy.visit('/views/template/create');
-        cy.setTinyMceContent('mce',"Some contract stuff").then(()=>{
+        cy.get('input[formControlName="title"]', { timeout: 10000 }).type(faker.system.fileName());
 
-            cy.get('input[formControlName="title"]',{timeout: 10000}).type(faker.system.fileName());
-            cy.get('button[id="submit-template"]',{timeout: 10000})
-                .click()
-                .then(() => {
-                    cy.url().should(
-                        'equal',
-                        'http://localhost:4200/views/template/manage',
-                    );
-                });
-        });
-        
+        cy.get('iframe.tox-edit-area__iframe') // Adjust selector if needed
+            .its('0.contentDocument.body')
+            .should('not.be.empty')
+            .then(cy.wrap)
+            .click()
+            .clear()
+            .type('This is a test content from Cypress');
+        cy.get('button[id="submit-template"]', { timeout: 10000 })
+            .click()
+            .then(() => {
+                cy.url().should(
+                    'equal',
+                    'http://localhost:4200/views/template/manage',
+                );
+            });
     });
 });

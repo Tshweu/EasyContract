@@ -1,7 +1,12 @@
 <div class="container">
+    @if(loading){
+    <mat-spinner></mat-spinner>
+    }@else{
+
     <app-contract-form [(contractForm)]="contractForm"> </app-contract-form>
     <app-recipient-form [(recipientForm)]="recipientForm"></app-recipient-form>
     <button mat-raised-button id="submit-contract" (click)="generate()">
         Generate
     </button>
+    }
 </div>

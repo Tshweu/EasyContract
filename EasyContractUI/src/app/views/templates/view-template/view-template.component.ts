@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { TemplateFormComponent } from '../../../components/forms/template-form/template-form.component';
 import { ActivatedRoute } from '@angular/router';
 import { TemplateService } from '../../../../services/template.service';
@@ -6,10 +6,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-view-template',
-    imports: [TemplateFormComponent, MatButtonModule,MatProgressSpinnerModule],
+    imports: [TemplateFormComponent, MatButtonModule, MatProgressSpinnerModule],
     templateUrl: './view-template.component.html',
     styleUrl: './view-template.component.css',
 })
@@ -17,6 +18,8 @@ export class ViewTemplateComponent implements OnInit {
     id: number;
     templateForm: FormGroup;
     loading: boolean = false;
+    private _snackBar = inject(MatSnackBar);
+
     constructor(
         private activatedRoute: ActivatedRoute,
         private templateService: TemplateService,
@@ -64,5 +67,9 @@ export class ViewTemplateComponent implements OnInit {
                 this.loading = false;
             },
         });
+    }
+
+    openSnackBar(message: string, action: string) {
+        this._snackBar.open(message, action, { duration: 3000 });
     }
 }
