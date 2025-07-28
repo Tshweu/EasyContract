@@ -39,6 +39,10 @@ export class ContractService {
     return this._http.put<Contract>(`${environment.api}contract/sign/${contract.id}`,contract);
   }
 
+  rejectContract(contract: Contract){
+    return this._http.put<Contract>(`${environment.api}contract/reject/${contract.id}`,contract);
+  }
+
   verifyContractUser(user: VerifyContractUser){
     return this._http.post<Contract>(`${environment.api}contract/validate/${user.contractId}`,user);
   }

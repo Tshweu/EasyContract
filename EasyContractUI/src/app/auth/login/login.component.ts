@@ -26,12 +26,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class LoginComponent {
   login_form : FormGroup;
   loading : boolean = false;
-  private _snackBar = inject(MatSnackBar);
   
   constructor(private fb: FormBuilder,private user_service: UserService, private router: Router){
     this.login_form = this.fb.group({
-      email: ['john@cena.com',[Validators.required, Validators.email]],
-      password: ['john',[Validators.required]]
+      email: ['',[Validators.required, Validators.email]],
+      password: ['',[Validators.required]]
     });
   }
 
@@ -52,6 +51,8 @@ export class LoginComponent {
       });
     }
   }
+
+  private _snackBar = inject(MatSnackBar);
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action,{duration: 3000});

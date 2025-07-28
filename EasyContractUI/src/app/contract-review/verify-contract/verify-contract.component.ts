@@ -51,11 +51,12 @@ export class VerifyContractComponent {
                 next: (res:any)=>{
                     this.loading = false;
                     sessionStorage.setItem('token',res.token);
+                    this.openSnackBar('Signatory verified successfully', 'Close');
                     this.router.navigateByUrl(`/contract/review/submit/${this.otpForm.value.contractId}`);
-
                 },
                 error: (err)=>{
                     this.loading = false;
+                    this.openSnackBar('Error verifying contract details: '+err.message, 'Close');
                     console.log(err);
                 }
             })
@@ -63,6 +64,6 @@ export class VerifyContractComponent {
     }
 
     openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action,{duration: 3000});
+        this._snackBar.open(message, action,{duration: 3000});
     }
 }

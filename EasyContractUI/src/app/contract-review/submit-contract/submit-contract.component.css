@@ -1,12 +1,12 @@
 .container{
     padding: 20px;
-}
-
-.terms{
-    height: 80vh;
+    padding-top: 10vh;
 }
 
 .header{
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0; /* required */
     height: 10vh;
 }
 
@@ -17,5 +17,6 @@
 .blue-primary-toolbar {
     background-color:#93C5FD; /* Material Blue 500 */
     color: white; /* Ensures text is readable */
+    position: fixed;
 }
   

@@ -43,7 +43,6 @@ export class SubmitContractComponent {
       next:(res)=>{
         this.loading = false;
         this.contract = res;
-        //add toast
       },
       error:(err)=>{
         this.loading = false;
@@ -55,7 +54,28 @@ export class SubmitContractComponent {
   submit():void{
     this.loading = true;
     if(this.contract){
-      this.contractService.updateContract(this.contract).subscribe({
+      this.contractService.signContract(this.contract).subscribe({
+        next:(res)=>{
+          this.loading = false;
+          this.openSnackBar('Contract signed successfully', 'Close');
+          this.router.navigateByUrl(`/contract/review/verify/${this.contractId}`);
+
+          // window.top.close();
+        },
+        error:(err)=>{
+          this.loading = false;
+          this.openSnackBar('Error : '+err.message, 'Close');
+          // window.top.close();
+          console.log(err);
+        }
+      })
+    }
+  }
+
+  reject():void{
+    this.loading = true;
+    if(this.contract){
+      this.contractService.rejectContract(this.contract).subscribe({
         next:(res)=>{
           this.loading = false;
         },

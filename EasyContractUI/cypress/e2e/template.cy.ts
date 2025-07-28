@@ -25,7 +25,7 @@ describe('My First Test', () => {
             .then(cy.wrap)
             .click()
             .clear()
-            .type('This is a test content from Cypress');
+            .type('This is a test content from Cypress {{fullName}} {{email}} {{idNumber}}', { force: true });
         cy.get('button[id="submit-template"]', { timeout: 10000 })
             .click()
             .then(() => {

@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { th } from '@faker-js/faker';
 
 @Component({
   selector: 'app-sign-up',
@@ -54,10 +55,12 @@ export class SignUpComponent {
       this.user_service.signup(obj).subscribe({
         next: (res: any) => {
           this.loading = false;
+          this.openSnackBar('Registration successful', 'Close');
           this.router.navigate(['/login']);
         },
         error: (err: any) => {
           this.loading = false;
+          this.openSnackBar('Registration failed: ' + err.error.message, 'Close');
         },
       });
     }
